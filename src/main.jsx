@@ -3,7 +3,7 @@
 */
 
 import { Routes, Route } from 'react-router-dom';
-import Layout from '@/components/Layout';
+import Layout from '@/components/layout';
 import MainPage from '@/pages/Main/main_page';
 
 function Main() {
