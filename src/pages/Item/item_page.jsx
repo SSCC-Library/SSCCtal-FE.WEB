@@ -11,23 +11,25 @@ function ItemPage() {
 		() => [
 			columnHelper.accessor('itemName', {
 				header: '물품명',
-				meta: { style: { padding: '12px 28px', minWidth: 120, maxWidth: 250 } },
+				meta: { style: { padding: '8px 28px', minWidth: 120, maxWidth: 220 } },
 			}),
 			columnHelper.accessor('type', {
 				header: '유형',
-				meta: { style: { padding: '12px 28px', minWidth: 0, maxWidth: 0 } },
+				meta: {
+					style: { padding: '8px 10px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
+				},
 			}),
 			columnHelper.accessor('id', {
 				header: '고유번호',
-				meta: { style: { padding: '12px 28px', minWidth: 120, maxWidth: 250 } },
+				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 250 } },
 			}),
 			columnHelper.accessor('hashtag', {
 				header: '해시태그',
-				meta: { style: { padding: '12px 28px', minWidth: 120, maxWidth: 200 } },
+				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 200 } },
 			}),
 			columnHelper.accessor('major', {
 				header: '학과',
-				meta: { style: { padding: '12px 28px', minWidth: 60, maxWidth: 120 } },
+				meta: { style: { padding: '8px 16px', minWidth: 60, maxWidth: 120 } },
 			}),
 			//추후 물품 관리 기능 추가
 			// columnHelper.display({
