@@ -67,7 +67,7 @@ function OverduePage() {
 	);
 
 	return (
-		<div className="rental-container">
+		<div className="overdue-container">
 			<InputField />
 			<Table columns={columns} data={data} />;
 		</div>
