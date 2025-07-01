@@ -62,8 +62,7 @@
 
 /* 헤더와 메뉴 사이 구분선 */
 .divider2 {
-	margin-left: 5vw;
-	width: 90vw;
+	width: 95vw;
 	height: 3px;
 	background-color: #d9d9d9;
 }
