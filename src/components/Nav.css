@@ -1,0 +1,86 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+/* 전체 네비게이션 영역 */
+.nav-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 20px;
+	font-family: 'Pretendard', sans-serif;
+}
+
+/* 헤더(로고, 사용자명) */
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	background-color: white;
+	padding: 20px 40px;
+}
+
+/* 로고 영역 (이미지+텍스트) */
+.logo {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.logo img {
+	width: 120px;
+	height: 120px;
+	object-fit: contain;
+}
+
+/* 로고 옆 구분선 */
+.divider {
+	width: 1px;
+	height: 120px;
+	background-color: #d9d9d9;
+}
+
+/* 헤더-로고 텍스트 */
+.logo-text {
+	font-size: 24px;
+	line-height: 1.4;
+	margin-left: 15px;
+	color: #000000;
+}
+.logo-text strong {
+	font-weight: 700;
+}
+
+/* 사용자명 */
+.admin {
+	border: none;
+	padding: 10px 20px;
+	font-size: 20px;
+	cursor: pointer;
+	align-self: flex-end;
+	margin-top: -90px;
+	margin-bottom: 10px;
+}
+
+/* 헤더와 메뉴 사이 구분선 */
+.divider2 {
+	width: 95vw;
+	height: 3px;
+	background-color: #d9d9d9;
+}
+
+/* 글로벌 네비게이션(메뉴) */
+.gnb {
+	display: flex;
+	justify-content: center;
+	gap: 160px;
+	margin-top: 10px;
+	font-size: 24px;
+	font-weight: 600;
+	list-style: none; /* li 점 삭제 */
+	padding: 0;
+}
+
+/* 메뉴 링크 */
+.gnb a {
+	text-decoration: none;
+	color: black;
+}
