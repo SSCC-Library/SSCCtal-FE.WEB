@@ -3,11 +3,15 @@
 */
 
 import { Routes, Route } from 'react-router-dom';
-import TestPage from './test_page';
+import Layout from '@/components/Layout';
+import MainPage from '@/pages/Main/main_page';
+
 function Main() {
 	return (
 		<Routes>
-			<Route path="/" element={<TestPage />} />
+			<Route path="/" element={<Layout />}>
+				<Route index element={<MainPage />} />
+			</Route>
 		</Routes>
 	);
 }
