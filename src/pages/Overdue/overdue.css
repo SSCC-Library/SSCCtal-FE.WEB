@@ -5,9 +5,41 @@
 	gap: 30px;
 }
 
-.search-bar-outer {
+.overdue-search-bar-outer {
 	width: 100%;
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+}
+
+.overdue-modal-title {
+	font-weight: 700;
+	font-size: 1.15em;
+	margin-bottom: 1em;
+}
+
+.overdue-modal-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6em;
+	padding: 0.5em 0 1em 0;
+}
+
+.overdue-modal-row {
+	display: flex;
+	gap: 0.5em;
+	align-items: flex-start;
+}
+
+.overdue-key {
+	color: #4682b4;
+	font-weight: 600;
+	min-width: 6em;
+	text-align: right;
+}
+
+.overdue-value {
+	margin-left: 0.6em;
+	word-break: break-all;
+	flex: 1;
 }
