@@ -1,12 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import InputField from '@/components/input_field';
+import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import './user.css';
 
 const columnHelper = createColumnHelper();
 
 function UserPage() {
+	const [search_type, set_search_type] = useState(''); // 검색 기준(기본: 물품명)
+	const [search_text, set_search_text] = useState(''); // 검색어
+
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor('name', {
@@ -36,6 +39,13 @@ function UserPage() {
 		],
 		[]
 	);
+
+	const column_options = columns
+		.filter((col) => col.accessorKey) // accessor 컬럼만 골라냄
+		.map((col) => ({
+			value: col.accessorKey,
+			label: typeof col.header === 'string' ? col.header : col.accessorKey,
+		}));
 
 	const data = useMemo(
 		() => [
@@ -73,9 +83,22 @@ function UserPage() {
 		[]
 	);
 
+	const handle_search = () => {
+		// 추후 api 호출 작성
+	};
+
 	return (
 		<div className="user-container">
-			<InputField />
+			<div className="search-bar-outer">
+				<SearchBar
+					filter_options={column_options}
+					search_type={search_type}
+					set_search_type={set_search_type}
+					search_text={search_text}
+					set_search_text={set_search_text}
+					on_search={handle_search}
+				/>
+			</div>
 			<Table columns={columns} data={data} />;
 		</div>
 	);

@@ -4,3 +4,10 @@
 	align-items: center;
 	gap: 30px;
 }
+
+.search-bar-outer {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
