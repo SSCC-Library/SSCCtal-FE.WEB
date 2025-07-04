@@ -2,13 +2,16 @@ import React, { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
+import AlertModal from '../../components/alert_modal';
+import Button from '../../components/button';
 import './rental.css';
 
 const columnHelper = createColumnHelper();
 
 function RentalPage() {
-	const [search_type, set_search_type] = useState(''); // 검색 기준(기본: 물품명)
-	const [search_text, set_search_text] = useState(''); // 검색어
+	const [search_type, set_search_type] = useState('');
+	const [search_text, set_search_text] = useState('');
+	const [selected_row, set_selected_row] = useState(null);
 
 	const columns = useMemo(
 		() => [
@@ -31,6 +34,10 @@ function RentalPage() {
 			columnHelper.accessor('user', {
 				header: '대여자',
 				meta: { style: { padding: '8px 16px', minWidth: 80, maxWidth: 120 } },
+			}),
+			columnHelper.accessor('student_id', {
+				header: '학번',
+				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 250 } },
 			}),
 			columnHelper.accessor('rentalDate', {
 				header: '대여 날짜',
@@ -75,6 +82,7 @@ function RentalPage() {
 				itemName: '컴퓨팅 사고',
 				type: '책',
 				user: '정영인',
+				student_id: '12345678',
 				rentalDate: '2025.06.20',
 				returnDate: '2025.07.01',
 				returnState: '반납 완료',
@@ -84,6 +92,7 @@ function RentalPage() {
 				itemName: '충전기',
 				type: '물품',
 				user: '원영진',
+				student_id: '87654321',
 				rentalDate: '2025.06.20',
 				returnDate: '-',
 				returnState: '대여중',
@@ -98,7 +107,7 @@ function RentalPage() {
 
 	return (
 		<div className="rental-container">
-			<div className="search-bar-outer">
+			<div className="rental-search-bar-outer">
 				<SearchBar
 					filter_options={column_options}
 					search_type={search_type}
@@ -108,7 +117,27 @@ function RentalPage() {
 					on_search={handle_search}
 				/>
 			</div>
-			<Table columns={columns} data={data} />;
+			<Table columns={columns} data={data} onRowClick={set_selected_row} />;
+			{selected_row && (
+				<AlertModal on_close={() => set_selected_row(null)}>
+					<div className="rental-modal-title">대여 상세 정보</div>
+					<div className="rental-modal-info">
+						{Object.entries(selected_row).map(([key, value]) => (
+							<div key={key} className="rental-modal-row">
+								<span className="rental-key">{key}:</span>
+								<span className="rental-value">{value}</span>
+							</div>
+						))}
+					</div>
+					<Button
+						onClick={() => set_selected_row(null)}
+						class_name="mini-button"
+						style={{ marginTop: '1.5em' }}
+					>
+						닫기
+					</Button>
+				</AlertModal>
+			)}
 		</div>
 	);
 }
