@@ -1,8 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import './nav.css';
 
 function Nav() {
+	console.log('ih');
+	const location = useLocation();
+	const current = location.pathname;
+
+	const menus = [
+		{ to: '/items', label: '물품 관리' },
+		{ to: '/rentals', label: '대여 기록' },
+		{ to: '/overdue', label: '연체 관리' },
+		{ to: '/users', label: '회원 관리' },
+	];
+
 	return (
 		<div className="nav-container">
 			<div className="header">
@@ -23,18 +34,21 @@ function Nav() {
 			<div className="divider2"></div>
 			<ul className="gnb">
 				{/* 주요 메뉴 */}
-				<li>
-					<Link to="/items">물품 관리</Link>
-				</li>
-				<li>
-					<Link to="/rentals">대여 기록</Link>
-				</li>
-				<li>
-					<Link to="/overdue">연체 관리</Link>
-				</li>
-				<li>
-					<Link to="/users">회원 관리</Link>
-				</li>
+				{menus.map((menu) => {
+					console.log('current:', current, 'menu:', menu.to);
+					return (
+						<li key={menu.to}>
+							<NavLink
+								to={menu.to}
+								className={({ isActive }) =>
+									isActive ? 'gnb-link active' : 'gnb-link'
+								}
+							>
+								{menu.label}
+							</NavLink>
+						</li>
+					);
+				})}
 			</ul>
 		</div>
 	);

@@ -1,12 +1,18 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import InputField from '@/components/input_field';
+import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
+import AlertModal from '../../components/alert_modal';
+import Button from '../../components/button';
 import './rental.css';
 
 const columnHelper = createColumnHelper();
 
 function RentalPage() {
+	const [search_type, set_search_type] = useState('');
+	const [search_text, set_search_text] = useState('');
+	const [selected_row, set_selected_row] = useState(null);
+
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor('number', {
@@ -28,6 +34,10 @@ function RentalPage() {
 			columnHelper.accessor('user', {
 				header: '대여자',
 				meta: { style: { padding: '8px 16px', minWidth: 80, maxWidth: 120 } },
+			}),
+			columnHelper.accessor('student_id', {
+				header: '학번',
+				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 250 } },
 			}),
 			columnHelper.accessor('rentalDate', {
 				header: '대여 날짜',
@@ -58,6 +68,13 @@ function RentalPage() {
 		[]
 	);
 
+	const column_options = columns
+		.filter((col) => col.accessorKey) // accessor 컬럼만 골라냄
+		.map((col) => ({
+			value: col.accessorKey,
+			label: typeof col.header === 'string' ? col.header : col.accessorKey,
+		}));
+
 	const data = useMemo(
 		() => [
 			{
@@ -65,6 +82,7 @@ function RentalPage() {
 				itemName: '컴퓨팅 사고',
 				type: '책',
 				user: '정영인',
+				student_id: '12345678',
 				rentalDate: '2025.06.20',
 				returnDate: '2025.07.01',
 				returnState: '반납 완료',
@@ -74,6 +92,7 @@ function RentalPage() {
 				itemName: '충전기',
 				type: '물품',
 				user: '원영진',
+				student_id: '87654321',
 				rentalDate: '2025.06.20',
 				returnDate: '-',
 				returnState: '대여중',
@@ -82,10 +101,43 @@ function RentalPage() {
 		[]
 	);
 
+	const handle_search = () => {
+		// 추후 api 호출 작성
+	};
+
 	return (
 		<div className="rental-container">
-			<InputField />
-			<Table columns={columns} data={data} />;
+			<div className="rental-search-bar-outer">
+				<SearchBar
+					filter_options={column_options}
+					search_type={search_type}
+					set_search_type={set_search_type}
+					search_text={search_text}
+					set_search_text={set_search_text}
+					on_search={handle_search}
+				/>
+			</div>
+			<Table columns={columns} data={data} onRowClick={set_selected_row} />;
+			{selected_row && (
+				<AlertModal on_close={() => set_selected_row(null)}>
+					<div className="rental-modal-title">대여 상세 정보</div>
+					<div className="rental-modal-info">
+						{Object.entries(selected_row).map(([key, value]) => (
+							<div key={key} className="rental-modal-row">
+								<span className="rental-key">{key}:</span>
+								<span className="rental-value">{value}</span>
+							</div>
+						))}
+					</div>
+					<Button
+						onClick={() => set_selected_row(null)}
+						class_name="mini-button"
+						style={{ marginTop: '1.5em' }}
+					>
+						닫기
+					</Button>
+				</AlertModal>
+			)}
 		</div>
 	);
 }

@@ -4,3 +4,10 @@
 	align-items: center;
 	gap: 30px;
 }
+
+.search-bar-outer {
+	width: 100%;
+	display: flex;
+	justify-content: space-between; /* 왼쪽-오른쪽 양끝 배치 */
+	align-items: center;
+}

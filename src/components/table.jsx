@@ -10,7 +10,7 @@ import './table.css';
 
 const columHelper = createColumnHelper();
 
-function Table({ columns, data }) {
+function Table({ columns, data, onRowClick }) {
 	const table = useReactTable({
 		data,
 		columns,
@@ -39,7 +39,7 @@ function Table({ columns, data }) {
 				</thead>
 				<tbody>
 					{table.getRowModel().rows.map((row) => (
-						<tr key={row.id}>
+						<tr key={row.id} onClick={() => onRowClick(row.original)}>
 							{row.getVisibleCells().map((cell) => (
 								<td
 									key={cell.id}

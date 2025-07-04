@@ -1,12 +1,18 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import InputField from '@/components/input_field';
+import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
+import AlertModal from '../../components/alert_modal';
+import Button from '../../components/button';
 import './overdue.css';
 
 const columnHelper = createColumnHelper();
 
 function OverduePage() {
+	const [search_type, set_search_type] = useState('');
+	const [search_text, set_search_text] = useState('');
+	const [selected_row, set_selected_row] = useState(null);
+
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor('itemName', {
@@ -23,22 +29,22 @@ function OverduePage() {
 				header: '대여자',
 				meta: { style: { padding: '8px 16px', minWidth: 80, maxWidth: 120 } },
 			}),
+			columnHelper.accessor('student_id', {
+				header: '학번',
+				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 250 } },
+			}),
 			columnHelper.accessor('rentalDate', {
 				header: '대여 날짜',
 				meta: { style: { padding: '8px 16px', minWidth: 100, maxWidth: 120 } },
 			}),
-			columnHelper.accessor('returnDate', {
-				header: '반납 날짜',
-				meta: { style: { padding: '8px 16px', minWidth: 100, maxWidth: 120 } },
-			}),
-			columnHelper.accessor('returnState', {
-				header: '반납 상태',
+			columnHelper.accessor('overdueDate', {
+				header: '연체일',
 				// cell: (info) => (
 				// 	<span className={info.getValue() === '대여중' ? 'state-rent' : 'state-return'}>
 				// 		{info.getValue()}
 				// 	</span>
 				// ),
-				meta: { style: { padding: '8px 14px', minWidth: 80, maxWidth: 100 } },
+				meta: { style: { padding: '8px 10px', minWidth: 60, maxWidth: 80 } },
 			}),
 			columnHelper.display({
 				id: 'manage',
@@ -52,24 +58,64 @@ function OverduePage() {
 		[]
 	);
 
+	const column_options = columns
+		.filter((col) => col.accessorKey) // accessor 컬럼만 골라냄
+		.map((col) => ({
+			value: col.accessorKey,
+			label: typeof col.header === 'string' ? col.header : col.accessorKey,
+		}));
+
 	const data = useMemo(
 		() => [
 			{
 				itemName: '우산',
 				type: '물품',
 				user: '원영진',
+				student_id: '12345678',
 				rentalDate: '2025.06.20',
-				returnDate: '-',
-				returnState: '연체',
+				overdueDate: '122',
 			},
 		],
 		[]
 	);
 
+	const handle_search = () => {
+		// 추후 api 호출 작성
+	};
+
 	return (
 		<div className="overdue-container">
-			<InputField />
-			<Table columns={columns} data={data} />;
+			<div className="overdue-search-bar-outer">
+				<SearchBar
+					filter_options={column_options}
+					search_type={search_type}
+					set_search_type={set_search_type}
+					search_text={search_text}
+					set_search_text={set_search_text}
+					on_search={handle_search}
+				/>
+			</div>
+			<Table columns={columns} data={data} onRowClick={set_selected_row} />;
+			{selected_row && (
+				<AlertModal on_close={() => set_selected_row(null)}>
+					<div className="overdue-modal-title">연체 상세 정보</div>
+					<div className="overude-modal-info">
+						{Object.entries(selected_row).map(([key, value]) => (
+							<div key={key} className="overdue-modal-row">
+								<span className="overdue-key">{key}:</span>
+								<span className="overdue-value">{value}</span>
+							</div>
+						))}
+					</div>
+					<Button
+						onClick={() => set_selected_row(null)}
+						class_name="mini-button"
+						style={{ marginTop: '1.5em' }}
+					>
+						닫기
+					</Button>
+				</AlertModal>
+			)}
 		</div>
 	);
 }
