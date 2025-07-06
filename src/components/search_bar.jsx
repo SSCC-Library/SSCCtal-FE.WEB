@@ -1,4 +1,5 @@
 import InputField from './input_field';
+import FilterDropDown from './filter_dropdown';
 import './search_bar.css';
 
 function SearchBar({
@@ -18,17 +19,11 @@ function SearchBar({
 				placeholder="검색어를 입력하세요"
 				onSearch={on_search}
 			/>
-			<select
-				className="search-filter"
+			<FilterDropDown
+				filter_options={filter_options}
 				value={search_type}
-				onChange={(e) => set_search_type(e.target.value)}
-			>
-				{filter_options.map((opt) => (
-					<option value={opt.value} key={opt.value}>
-						{opt.label}
-					</option>
-				))}
-			</select>
+				onChange={set_search_type}
+			/>
 		</div>
 	);
 }
