@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import AlertIcon from './alert_icon';
 import './nav.css';
 
 function Nav() {
@@ -12,6 +13,17 @@ function Nav() {
 		{ to: '/rentals', label: '대여 기록' },
 		{ to: '/overdue', label: '연체 관리' },
 		{ to: '/users', label: '회원 관리' },
+		{ to: '/requests', label: '요청 사항 ' },
+	];
+
+	const alerts = [
+		{
+			message: '회원정보 수정 요청이 있습니다.',
+			onClick: () => {
+				/* 상세 페이지 이동 등 */
+			},
+		},
+		{ message: '회원정보 수정 요청이 있습니다.' },
 	];
 
 	return (
@@ -22,16 +34,13 @@ function Nav() {
 					<Link to="/">
 						<img src="src/assets/img/logo.png" alt="logo" />
 					</Link>
-					<div className="divider"></div>
-					<div className="logo-text">
-						<strong>SSCC</strong>
-						<br />
-						<span>물품 대여</span>
-					</div>
 				</div>
-				<div className="admin">관리자 님</div>
+				<div className="admin-box">
+					<AlertIcon alerts={alerts} />
+					<div className="admin">관리자 님</div>
+				</div>
 			</div>
-			<div className="divider2"></div>
+			<div className="divider"></div>
 			<ul className="gnb">
 				{/* 주요 메뉴 */}
 				{menus.map((menu) => {
