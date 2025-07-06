@@ -9,6 +9,7 @@ import ItemPage from '@/pages/Item/item_page';
 import RentalPage from '@/pages/Rental/rental_page';
 import OverduePage from '@/pages/Overdue/overdue_page';
 import UserPage from '@/pages/User/user_page';
+import RequestPage from './pages/Request/request_page';
 import '@/css/reset.css';
 
 function Main() {
@@ -20,6 +21,7 @@ function Main() {
 				<Route path="/rentals" element={<RentalPage />} />
 				<Route path="/overdue" element={<OverduePage />} />
 				<Route path="/users" element={<UserPage />} />
+				<Route path="/requests" element={<RequestPage />} />
 			</Route>
 		</Routes>
 	);
