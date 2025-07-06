@@ -47,7 +47,10 @@ function UserPage() {
 				id: 'adjust',
 				header: '관리',
 				cell: (info) => (
-					<button onClick={() => handle_edit(info.row.original)}>수정</button>
+					<div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+						<button onClick={() => handle_edit(info.row.original)}>수정</button>
+						<button>삭제</button>
+					</div>
 				),
 				meta: {
 					style: { padding: '8px 6px', minWidth: 60, maxWidth: 80, textAlign: 'center' },

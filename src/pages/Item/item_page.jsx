@@ -1,3 +1,7 @@
+/*
+추후 추가 기능: 물품 상태 enum으로 선택
+*/
+
 import React, { useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import SearchBar from '../../components/search_bar';
@@ -34,7 +38,7 @@ function ItemPage() {
 					style: { padding: '8px 10px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
 				},
 			}),
-			columnHelper.accessor('status', {
+			columnHelper.accessor('state', {
 				header: '물품 상태',
 				meta: {
 					style: { padding: '8px 10px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
