@@ -10,12 +10,36 @@ import './table.css';
 
 const columHelper = createColumnHelper();
 
-function Table({ columns, data, onRowClick }) {
+function Table({ columns, data, page, size, total, onPageChange, onSizeChange, onRowClick }) {
 	const table = useReactTable({
 		data,
 		columns,
+		pageCount: Math.ceil(total / size),
+		state: {
+			pagination: {
+				pageIndex: page - 1, // 1-base to 0-base
+				pageSize: size,
+			},
+		},
+		manualPagination: true, // 서버 페이징
+		onPaginationChange: (updater) => {
+			let next;
+			if (typeof updater === 'function') {
+				next = updater({
+					pageIndex: page - 1,
+					pageSize: size,
+				});
+			} else {
+				next = updater;
+			}
+			// pageIndex(0-base), pageSize
+			if (next.pageIndex !== undefined && next.pageIndex !== page - 1)
+				onPageChange(next.pageIndex + 1);
+			if (next.pageSize !== undefined && next.pageSize !== size) onSizeChange(next.pageSize);
+		},
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
+		manual: true, // tanstack v8에서는 manualPagination만 써도 됨
 	});
 
 	return (
@@ -69,7 +93,8 @@ function Table({ columns, data, onRowClick }) {
 					{'<'}
 				</button>
 				<span>
-					{table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+					{table.getState().pagination.pageIndex + 1}
+					{/* {table.getState().pagination.pageIndex + 1} / {table.getPageCount()} */}
 				</span>
 				<button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
 					{'>'}
