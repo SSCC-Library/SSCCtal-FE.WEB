@@ -1,10 +1,15 @@
 // components/edit_form.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './edit_form.css';
 import Button from './button';
 
-function EditForm({ initial_data, fields, on_save, on_cancel }) {
-	const [form, set_form] = useState(initial_data);
+function EditForm({ initial_data, fields, on_save, on_cancel, loading = false, error = null }) {
+	const [form, set_form] = useState(initial_data || {});
+	const [form_error, set_form_error] = useState(null);
+
+	useEffect(() => {
+		set_form(initial_data || {});
+	}, [initial_data]);
 
 	const handle_change = (e) => {
 		const { name, value } = e.target;
@@ -13,6 +18,15 @@ function EditForm({ initial_data, fields, on_save, on_cancel }) {
 
 	const handle_submit = (e) => {
 		e.preventDefault();
+
+		const empty_field = fields.find(
+			(field) => !form[field.value] || form[field.value].trim() === ''
+		);
+		if (empty_field) {
+			set_form_error(`${empty_field.label} 입력은 필수입니다.`);
+			return;
+		}
+		set_form_error(null);
 		on_save(form);
 	};
 
@@ -28,14 +42,21 @@ function EditForm({ initial_data, fields, on_save, on_cancel }) {
 						onChange={handle_change}
 						className="edit-form-input"
 						autoComplete="off"
+						disabled={loading}
 					/>
 				</label>
 			))}
+			{(form_error || error) && <div className="edit-form-error">{form_error || error}</div>}
 			<div className="edit-form-btns">
-				<Button type="submit" class_name="mini-button">
-					저장
+				<Button type="submit" class_name="mini-button" disabled={loading}>
+					{loading ? '저장중...' : '저장'}
 				</Button>
-				<Button type="button" onClick={on_cancel} class_name="mini-button">
+				<Button
+					type="button"
+					onClick={on_cancel}
+					class_name="mini-button"
+					disabled={loading}
+				>
 					취소
 				</Button>
 			</div>
