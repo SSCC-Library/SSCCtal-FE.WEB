@@ -4,7 +4,6 @@ import AlertIcon from './alert_icon';
 import './nav.css';
 
 function Nav() {
-	console.log('ih');
 	const location = useLocation();
 	const current = location.pathname;
 
@@ -44,7 +43,6 @@ function Nav() {
 			<ul className="gnb">
 				{/* 주요 메뉴 */}
 				{menus.map((menu) => {
-					console.log('current:', current, 'menu:', menu.to);
 					return (
 						<li key={menu.to}>
 							<NavLink
