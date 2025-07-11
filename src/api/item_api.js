@@ -6,17 +6,17 @@ import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_BACKEND_TEST_URL;
 const ADMIN_TOKEN = 'mock-admin-token';
 
-const AUTH_HEADER = {
-	headers: {
-		Authorization: `Bearer ${ADMIN_TOKEN}`,
-	},
-};
+// const AUTH_HEADER = {
+// 	headers: {
+// 		Authorization: `Bearer ${ADMIN_TOKEN}`,
+// 	},
+// };
 
 export const get_item_list = async (page = 1, size = 10, search_type = '', search_text = '') => {
 	try {
 		const res = await axios.get(`${BASE_URL}/admin/items`, {
 			params: { page, size, search_type, search_text },
-			...AUTH_HEADER,
+			// ...AUTH_HEADER,
 		});
 		return res.data;
 	} catch (error) {
@@ -26,7 +26,7 @@ export const get_item_list = async (page = 1, size = 10, search_type = '', searc
 };
 export const get_item_detail = async (item_id) => {
 	try {
-		const res = await axios.get(`${BASE_URL}/admin/items/${item_id}`, AUTH_HEADER);
+		const res = await axios.get(`${BASE_URL}/admin/items/${item_id}`);
 		return res.data;
 	} catch (error) {
 		console.error('물품 상세 조회 실패:', error);

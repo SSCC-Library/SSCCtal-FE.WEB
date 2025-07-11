@@ -38,7 +38,7 @@ function ItemPage() {
 		set_loading(true);
 		set_error(null);
 		try {
-			const res = await get_item_list({ page, size, search_type, search_text });
+			const res = await get_item_list(page, size, search_type, search_text);
 			set_data(res.items || []);
 		} catch (err) {
 			set_error('물품 목록 불러오기 실패');
@@ -65,7 +65,7 @@ function ItemPage() {
 
 	const handle_row_click = (row) => {
 		set_selected_row(row);
-		fetch_detail(row.id);
+		fetch_detail(row.item_id);
 	};
 
 	const handle_search = () => {
@@ -191,7 +191,7 @@ function ItemPage() {
 			) : (
 				<Table
 					columns={columns}
-					data={mock_data}
+					data={data}
 					page={page}
 					size={size}
 					onPageChange={set_page}
