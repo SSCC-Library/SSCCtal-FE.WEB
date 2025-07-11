@@ -1,15 +1,17 @@
 /*
-추후 추가 기능: 물품 상태 enum으로 선택
+추후 추가 기능
+- 물품 상태 enum으로 선택
+- 물품 추가
+- 물품 상태 수정
 */
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { get_item_list, get_item_detail, add_item, edit_item } from '../../api/item_api';
+import { get_item_list, get_item_detail } from '../../api/item_api';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import AlertModal from '../../components/alert_modal';
 import Button from '../../components/button';
-import EditForm from '../../components/edif_form';
 import './item.css';
 
 const columnHelper = createColumnHelper();
@@ -27,9 +29,6 @@ function ItemPage() {
 	const [detail_data, set_detail_data] = useState([]);
 	const [detail_loading, set_detail_loading] = useState(false);
 	const [detail_error, set_detail_error] = useState(null);
-
-	const [form_loading, set_form_loading] = useState(false);
-	const [form_error, set_form_error] = useState(null);
 
 	const [page, set_page] = useState(1);
 	const [size, set_size] = useState(10);
@@ -79,26 +78,33 @@ function ItemPage() {
 	};
 	const handle_cancel = () => set_edit_modal({ open: false, item: null, mode: 'add' });
 
-	const handle_save = async (form) => {
-		set_form_loading(true);
-		set_form_error(null);
-		try {
-			if (edit_modal.mode === 'add') {
-				await add_item(form);
-			} else {
-				await edit_item(edit_modal.item.id, form);
-			}
-			set_edit_modal({ open: false, item: null, mode: 'add' });
-			fetch_items(); // 저장 후 목록 갱신
-		} catch (err) {
-			set_form_error('저장 실패: ' + (err?.response?.data?.message || err?.message || ''));
-		}
-		set_form_loading(false);
-	};
+	//추후 개발 예정
+	// const handle_save = async (form) => {
+	// 	set_form_loading(true);
+	// 	set_form_error(null);
+	// 	try {
+	// 		if (edit_modal.mode === 'add') {
+	// 			await add_item(form);
+	// 		} else {
+	// 			await edit_item(edit_modal.item.id, form);
+	// 		}
+	// 		set_edit_modal({ open: false, item: null, mode: 'add' });
+	// 		fetch_items(); // 저장 후 목록 갱신
+	// 	} catch (err) {
+	// 		set_form_error('저장 실패: ' + (err?.response?.data?.message || err?.message || ''));
+	// 	}
+	// 	set_form_loading(false);
+	// };
 
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor('itemName', {
+			columnHelper.accessor('item_id', {
+				header: '물품 번호',
+				meta: {
+					style: { padding: '8px 10px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
+				},
+			}),
+			columnHelper.accessor('name', {
 				header: '물품명',
 				meta: { style: { padding: '8px 28px', minWidth: 120, maxWidth: 220 } },
 			}),
@@ -108,13 +114,13 @@ function ItemPage() {
 					style: { padding: '8px 10px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
 				},
 			}),
-			columnHelper.accessor('state', {
+			columnHelper.accessor('copy_status', {
 				header: '물품 상태',
 				meta: {
 					style: { padding: '8px 10px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
 				},
 			}),
-			columnHelper.accessor('id', {
+			columnHelper.accessor('identifier_code', {
 				header: '고유번호',
 				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 250 } },
 			}),
@@ -122,23 +128,24 @@ function ItemPage() {
 				header: '해시태그',
 				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 200 } },
 			}),
-			columnHelper.display({
-				id: 'adjust',
-				header: '관리',
-				cell: (info) => (
-					<button
-						onClick={(e) => {
-							e.stopPropagation();
-							handle_edit(info.row.original);
-						}}
-					>
-						수정
-					</button>
-				),
-				meta: {
-					style: { padding: '8px 6px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
-				},
-			}),
+			//추후 개발 예정
+			// columnHelper.display({
+			// 	id: 'adjust',
+			// 	header: '관리',
+			// 	cell: (info) => (
+			// 		<button
+			// 			onClick={(e) => {
+			// 				e.stopPropagation();
+			// 				handle_edit(info.row.original);
+			// 			}}
+			// 		>
+			// 			수정
+			// 		</button>
+			// 	),
+			// 	meta: {
+			// 		style: { padding: '8px 6px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
+			// 	},
+			// }),
 		],
 		[]
 	);
@@ -153,13 +160,13 @@ function ItemPage() {
 	const mock_data = useMemo(
 		() => [
 			{
-				itemName: '컴퓨팅 사고',
+				name: '컴퓨팅 사고',
 				type: '책',
-				state: '정상',
-				id: '1',
+				copy_status: '정상',
+				identifier_code: '1',
 				hashtag: '파이썬',
 			},
-			{ itemName: '충전기', type: '물품', state: '정상', id: '2' },
+			{ name: '충전기', type: '물품', copy_status: '정상', identifier_code: '2' },
 		],
 		[]
 	);
@@ -184,7 +191,7 @@ function ItemPage() {
 			) : (
 				<Table
 					columns={columns}
-					data={data}
+					data={mock_data}
 					page={page}
 					size={size}
 					onPageChange={set_page}
@@ -195,14 +202,15 @@ function ItemPage() {
 			{/* 추가/수정 모달 */}
 			{edit_modal.open && (
 				<AlertModal on_close={handle_cancel}>
-					<EditForm
+					<div className="todo"></div>
+					{/* <EditForm
 						initial_data={edit_modal.item}
 						fields={column_options}
 						on_save={handle_save}
 						on_cancel={handle_cancel}
 						loading={form_loading}
 						error={form_error}
-					/>
+					/> */}
 				</AlertModal>
 			)}
 			{/* 상세 모달 */}
