@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
+import { get_rental_list, get_rental_detail } from '../../api/rental_api';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import AlertModal from '../../components/alert_modal';
@@ -13,15 +14,64 @@ function RentalPage() {
 	const [search_text, set_search_text] = useState('');
 	const [selected_row, set_selected_row] = useState(null);
 
+	const [data, set_data] = useState([]);
+	const [loading, set_loading] = useState(false);
+	const [error, set_error] = useState(null);
+
+	const [detail_data, set_detail_data] = useState([]);
+	const [detail_loading, set_detail_loading] = useState(false);
+	const [detail_error, set_detail_error] = useState(null);
+
+	const [page, set_page] = useState(1);
+	const [size, set_size] = useState(10);
+
+	//대여 기록 리스트 가져오기
+	const fetch_rentals = async (page, size) => {
+		set_loading(true);
+		set_error(null);
+		try {
+			const res = await get_rental_list(page, size, search_type, search_text);
+			set_data(res.items || []);
+		} catch (err) {
+			set_error('대여 기록 불러오기 실패');
+		}
+		set_loading(false);
+	};
+
+	//대여 기록 상세 정보 가져오기
+	const fetch_detail = async (rental_id) => {
+		set_detail_loading(true);
+		set_detail_error(null);
+		try {
+			const res = await get_rental_detail(rental_id);
+			set_detail_data(res);
+		} catch (err) {
+			set_detail_error('상세 정보 불러오기 실패');
+		}
+		set_detail_loading(false);
+	};
+
+	useEffect(() => {
+		fetch_rentals();
+	}, [search_type, search_text, page, size]);
+
+	const handle_row_click = (row) => {
+		set_selected_row(row);
+		fetch_detail(row.rental_id);
+	};
+
+	const handle_search = () => {
+		set_page(1);
+	};
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor('number', {
+			columnHelper.accessor('rental_id', {
 				header: '순번',
 				meta: {
 					style: { padding: '8px 6px', minWidth: 40, maxWidth: 50, textAlign: 'center' },
 				},
 			}),
-			columnHelper.accessor('itemName', {
+			columnHelper.accessor('name', {
 				header: '물품명',
 				meta: { style: { padding: '8px 28px', minWidth: 120, maxWidth: 220 } },
 			}),
@@ -31,7 +81,7 @@ function RentalPage() {
 					style: { padding: '8px 10px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
 				},
 			}),
-			columnHelper.accessor('user', {
+			columnHelper.accessor('user_name', {
 				header: '대여자',
 				meta: { style: { padding: '8px 16px', minWidth: 80, maxWidth: 120 } },
 			}),
@@ -39,21 +89,16 @@ function RentalPage() {
 				header: '학번',
 				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 250 } },
 			}),
-			columnHelper.accessor('rentalDate', {
+			columnHelper.accessor('item_borrow_date', {
 				header: '대여 날짜',
 				meta: { style: { padding: '8px 16px', minWidth: 100, maxWidth: 120 } },
 			}),
-			columnHelper.accessor('returnDate', {
+			columnHelper.accessor('item_return_date', {
 				header: '반납 날짜',
 				meta: { style: { padding: '8px 16px', minWidth: 100, maxWidth: 120 } },
 			}),
-			columnHelper.accessor('returnState', {
+			columnHelper.accessor('rental_status', {
 				header: '반납 상태',
-				// cell: (info) => (
-				// 	<span className={info.getValue() === '대여중' ? 'state-rent' : 'state-return'}>
-				// 		{info.getValue()}
-				// 	</span>
-				// ),
 				meta: { style: { padding: '8px 14px', minWidth: 80, maxWidth: 100 } },
 			}),
 			columnHelper.display({
@@ -75,7 +120,7 @@ function RentalPage() {
 			label: typeof col.header === 'string' ? col.header : col.accessorKey,
 		}));
 
-	const data = useMemo(
+	const mock_data = useMemo(
 		() => [
 			{
 				number: '1',
@@ -101,10 +146,6 @@ function RentalPage() {
 		[]
 	);
 
-	const handle_search = () => {
-		// 추후 api 호출 작성
-	};
-
 	return (
 		<div className="rental-container">
 			<div className="rental-search-bar-outer">
@@ -117,12 +158,20 @@ function RentalPage() {
 					on_search={handle_search}
 				/>
 			</div>
-			<Table columns={columns} data={data} onRowClick={set_selected_row} />;
+			<Table
+				columns={columns}
+				data={data}
+				page={page}
+				size={size}
+				onPageChange={set_page}
+				onSizeChange={set_size}
+				onRowClick={handle_row_click}
+			/>
 			{selected_row && (
 				<AlertModal on_close={() => set_selected_row(null)}>
 					<div className="rental-modal-title">대여 상세 정보</div>
 					<div className="rental-modal-info">
-						{Object.entries(selected_row).map(([key, value]) => (
+						{Object.entries(detail_data).map(([key, value]) => (
 							<div key={key} className="rental-modal-row">
 								<span className="rental-key">{key}:</span>
 								<span className="rental-value">{value}</span>

@@ -24,18 +24,18 @@ export const get_rental_list = async (page = 1, size = 10, search_type = '', sea
 		throw error;
 	}
 };
-export const get_rental_detail = async (item_id) => {
+export const get_rental_detail = async (rental_id) => {
 	try {
-		const res = await axios.get(`${BASE_URL}/admin/rentals/${item_id}`);
+		const res = await axios.get(`${BASE_URL}/admin/rentals/${rental_id}`);
 		return res.data;
 	} catch (error) {
 		console.error('대여 기록 상세 조회 실패:', error);
 		throw error;
 	}
 };
-export const return_rental = async (item_id) => {
+export const return_rental = async (rental_id) => {
 	try {
-		const res = await axios.post(`${BASE_URL}/admin/rentals/${item_id}/return`);
+		const res = await axios.post(`${BASE_URL}/admin/rentals/${rental_id}/return`);
 		return res.data;
 	} catch (error) {
 		console.error('강제 반납 처리 실패:', error);
