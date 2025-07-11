@@ -14,7 +14,8 @@ function Table({ columns, data, page, size, total, onPageChange, onSizeChange, o
 	const table = useReactTable({
 		data,
 		columns,
-		pageCount: Math.ceil(total / size),
+		// pageCount: Math.ceil(total / size),
+		pageCount: 2,
 		state: {
 			pagination: {
 				pageIndex: page - 1, // 1-base to 0-base

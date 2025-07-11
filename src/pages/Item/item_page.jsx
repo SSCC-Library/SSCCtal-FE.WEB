@@ -60,7 +60,7 @@ function ItemPage() {
 	};
 
 	useEffect(() => {
-		fetch_items();
+		fetch_items(page, size);
 	}, [search_type, search_text, page, size]);
 
 	const handle_row_click = (row) => {
@@ -70,14 +70,9 @@ function ItemPage() {
 
 	const handle_search = () => {
 		set_page(1);
-		fetch_items();
 	};
 
-	const handle_edit = (item = {}) => {
-		set_edit_modal({ open: true, item, mode: item && item.id ? 'edit' : 'add' });
-	};
-	const handle_cancel = () => set_edit_modal({ open: false, item: null, mode: 'add' });
-
+	//
 	//추후 개발 예정
 	// const handle_save = async (form) => {
 	// 	set_form_loading(true);
@@ -95,6 +90,10 @@ function ItemPage() {
 	// 	}
 	// 	set_form_loading(false);
 	// };
+	//	const handle_edit = (item = {}) => {
+	// 	set_edit_modal({ open: true, item, mode: item && item.id ? 'edit' : 'add' });
+	// };
+	// const handle_cancel = () => set_edit_modal({ open: false, item: null, mode: 'add' });
 
 	const columns = useMemo(
 		() => [
@@ -128,6 +127,7 @@ function ItemPage() {
 				header: '해시태그',
 				meta: { style: { padding: '8px 16px', minWidth: 120, maxWidth: 200 } },
 			}),
+
 			//추후 개발 예정
 			// columnHelper.display({
 			// 	id: 'adjust',
@@ -184,21 +184,17 @@ function ItemPage() {
 					on_search={handle_search}
 				/>
 			</div>
-			{loading ? (
-				<div>로딩중...</div>
-			) : error ? (
-				<div className="error-text">{error}</div>
-			) : (
-				<Table
-					columns={columns}
-					data={data}
-					page={page}
-					size={size}
-					onPageChange={set_page}
-					onSizeChange={set_size}
-					onRowClick={handle_row_click}
-				/>
-			)}
+
+			<Table
+				columns={columns}
+				data={data}
+				page={page}
+				size={size}
+				onPageChange={set_page}
+				onSizeChange={set_size}
+				onRowClick={handle_row_click}
+			/>
+
 			{/* 추가/수정 모달 */}
 			{edit_modal.open && (
 				<AlertModal on_close={handle_cancel}>
@@ -222,12 +218,12 @@ function ItemPage() {
 						<div className="error-text">{detail_error}</div>
 					) : detail_data ? (
 						<>
-							<div className="rental-modal-title">물품 상세 정보</div>
-							<div className="rental-modal-info">
+							<div className="item-modal-title">물품 상세 정보</div>
+							<div className="item-modal-info">
 								{Object.entries(detail_data).map(([key, value]) => (
-									<div key={key} className="rental-modal-row">
-										<span className="rental-key">{key}:</span>
-										<span className="rental-value">{value}</span>
+									<div key={key} className="item-modal-row">
+										<span className="item-key">{key}:</span>
+										<span className="item-value">{value}</span>
 									</div>
 								))}
 							</div>
