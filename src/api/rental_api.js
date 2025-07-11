@@ -33,7 +33,29 @@ export const get_rental_detail = async (rental_id) => {
 		throw error;
 	}
 };
-export const return_rental = async (rental_id) => {
+
+export const get_overdue_list = async (page = 1, size = 10, search_type = '', search_text = '') => {
+	try {
+		const res = await axios.get(`${BASE_URL}/admin/overdues`, {
+			params: { page, size, search_type, search_text },
+			// ...AUTH_HEADER,
+		});
+		return res.data;
+	} catch (error) {
+		console.error('연체 기록 리스트 조회 실패:', error);
+		throw error;
+	}
+};
+export const get_overdue_detail = async (rental_id) => {
+	try {
+		const res = await axios.get(`${BASE_URL}/admin/overdues/${rental_id}`);
+		return res.data;
+	} catch (error) {
+		console.error('연체 기록 상세 조회 실패:', error);
+		throw error;
+	}
+};
+export const force_return = async (rental_id) => {
 	try {
 		const res = await axios.post(`${BASE_URL}/admin/rentals/${rental_id}/return`);
 		return res.data;
