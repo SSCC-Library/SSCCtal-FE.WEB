@@ -52,7 +52,7 @@ function RentalPage() {
 	};
 
 	useEffect(() => {
-		fetch_rentals();
+		fetch_rentals(page, size);
 	}, [search_type, search_text, page, size]);
 
 	const handle_row_click = (row) => {

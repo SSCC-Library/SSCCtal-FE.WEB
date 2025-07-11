@@ -60,7 +60,7 @@ function ItemPage() {
 	};
 
 	useEffect(() => {
-		fetch_items();
+		fetch_items(page, size);
 	}, [search_type, search_text, page, size]);
 
 	const handle_row_click = (row) => {
@@ -70,7 +70,6 @@ function ItemPage() {
 
 	const handle_search = () => {
 		set_page(1);
-		fetch_items();
 	};
 
 	//
