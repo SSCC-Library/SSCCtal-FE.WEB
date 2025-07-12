@@ -47,7 +47,7 @@ export const add_user = async (user_data) => {
 
 export const edit_user = async (student_id, user_data) => {
 	try {
-		const res = await axios.post(`${BASE_URL}/admin/users/${student_id}`, user_data);
+		const res = await axios.patch(`${BASE_URL}/admin/users/${student_id}`, user_data);
 		return res.data;
 	} catch (error) {
 		console.error('회원 정보 수정 실패:', error);
