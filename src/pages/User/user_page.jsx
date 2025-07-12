@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
+import { get_user_list, add_user, edit_user } from '../../api/user_api';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import EditForm from '../../components/edif_form';
@@ -10,16 +11,57 @@ import './user.css';
 const columnHelper = createColumnHelper();
 
 function UserPage() {
-	const [search_type, set_search_type] = useState(''); // 검색 기준(기본: 물품명)
-	const [search_text, set_search_text] = useState(''); // 검색어
-	const [edit_modal, set_edit_modal] = useState({ open: false, user: null });
+	const [search_type, set_search_type] = useState('');
+	const [search_text, set_search_text] = useState('');
+	const [edit_modal, set_edit_modal] = useState({ open: false, item: null, mode: 'add' });
+	const [selected_row, set_selected_row] = useState(null);
 
-	const handle_edit = (user) => set_edit_modal({ open: true, user });
-	const handle_save = (form) => {
-		// 저장 로직 (상태 갱신 or API 호출)
-		set_edit_modal({ open: false, user: null });
+	const [data, set_data] = useState([]);
+	const [error, set_error] = useState(null);
+	const [form_error, set_form_error] = useState(null);
+	const [page, set_page] = useState(1);
+	const [size, set_size] = useState(10);
+
+	//회원 리스트 가져오기
+	const fetch_user = async (page, size) => {
+		set_error(null);
+		try {
+			const res = await get_user_list(page, size, search_type, search_text);
+			set_data(res.items || []);
+		} catch (err) {
+			set_error('물품 목록 불러오기 실패');
+		}
 	};
-	const handle_cancel = () => set_edit_modal({ open: false, user: null });
+
+	useEffect(() => {
+		fetch_user(page, size);
+	}, [search_type, search_text, page, size]);
+
+	const handle_search = () => {
+		set_page(1);
+	};
+
+	const handle_save = async (form) => {
+		set_form_error(null);
+		try {
+			if (edit_modal.mode === 'add') {
+				await add_user(form);
+			} else {
+				await edit_user(edit_modal.item.student_id, form);
+			}
+			set_edit_modal({ open: false, item: null, mode: 'add' });
+			fetch_user(); // 저장 후 목록 갱신
+		} catch (err) {
+			set_form_error('저장 실패: ' + (err?.response?.data?.message || err?.message || ''));
+		}
+	};
+	const handle_edit = (item = {}) => {
+		set_edit_modal({ open: true, item, mode: item && item.student_id ? 'edit' : 'add' });
+	};
+	const handle_cancel = () => set_edit_modal({ open: false, item: null, mode: 'add' });
+	const handle_row_click = (row) => {
+		set_selected_row(row);
+	};
 
 	const columns = useMemo(
 		() => [
@@ -39,9 +81,29 @@ function UserPage() {
 				header: '이메일',
 				meta: { style: { padding: '8px 28px', minWidth: 120, maxWidth: 220 } },
 			}),
-			columnHelper.accessor('phone', {
+			columnHelper.accessor('phone_number', {
 				header: '전화번호',
 				meta: { style: { padding: '8px 28px', minWidth: 120, maxWidth: 220 } },
+			}),
+			columnHelper.accessor('gender', {
+				header: '성별',
+				meta: { style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 } },
+			}),
+			columnHelper.accessor('major2', {
+				header: '복수전공',
+				meta: { style: { padding: '8px 16px', minWidth: 60, maxWidth: 120 } },
+			}),
+			columnHelper.accessor('minor', {
+				header: '부전공',
+				meta: { style: { padding: '8px 16px', minWidth: 60, maxWidth: 120 } },
+			}),
+			columnHelper.accessor('user_classification', {
+				header: '분류',
+				meta: { style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 } },
+			}),
+			columnHelper.accessor('user_status', {
+				header: '학적',
+				meta: { style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 } },
 			}),
 			columnHelper.display({
 				id: 'adjust',
@@ -67,7 +129,7 @@ function UserPage() {
 			label: typeof col.header === 'string' ? col.header : col.accessorKey,
 		}));
 
-	const data = useMemo(
+	const mock_data = useMemo(
 		() => [
 			{
 				name: '권나현',
@@ -108,10 +170,6 @@ function UserPage() {
 		[]
 	);
 
-	const handle_search = () => {
-		// 추후 api 호출 작성
-	};
-
 	return (
 		<div className="user-container">
 			<div className="search-bar-outer">
@@ -125,12 +183,19 @@ function UserPage() {
 					on_search={handle_search}
 				/>
 			</div>
-			<Table columns={columns} data={data} />
-
+			<Table
+				columns={columns}
+				data={data}
+				page={page}
+				size={size}
+				onPageChange={set_page}
+				onSizeChange={set_size}
+				onRowClick={handle_row_click}
+			/>
 			{edit_modal.open && (
 				<AlertModal on_close={handle_cancel}>
 					<EditForm
-						initial_data={edit_modal.user}
+						initial_data={edit_modal.item}
 						fields={column_options}
 						on_save={handle_save}
 						on_cancel={handle_cancel}
