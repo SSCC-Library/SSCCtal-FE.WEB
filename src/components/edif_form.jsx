@@ -31,21 +31,53 @@ function EditForm({ initial_data, fields, on_save, on_cancel, loading = false, e
 	};
 
 	return (
+		// <form className="edit-form" onSubmit={handle_submit}>
+		// 	{fields.map((field) => (
+		// 		<label key={field.value} className="edit-form-label">
+		// 			{field.label}
+		// 			<input
+		// 				name={field.value}
+		// 				type="text"
+		// 				value={form[field.value] ?? ''}
+		// 				onChange={handle_change}
+		// 				className="edit-form-input"
+		// 				autoComplete="off"
+		// 				disabled={loading}
+		// 			/>
+		// 		</label>
+		// 	))}
+		// 	{(form_error || error) && <div className="edit-form-error">{form_error || error}</div>}
+		// 	<div className="edit-form-btns">
+		// 		<Button type="submit" class_name="mini-button" disabled={loading}>
+		// 			{loading ? '저장중...' : '저장'}
+		// 		</Button>
+		// 		<Button
+		// 			type="button"
+		// 			onClick={on_cancel}
+		// 			class_name="mini-button"
+		// 			disabled={loading}
+		// 		>
+		// 			취소
+		// 		</Button>
+		// 	</div>
+		// </form>
 		<form className="edit-form" onSubmit={handle_submit}>
-			{fields.map((field) => (
-				<label key={field.value} className="edit-form-label">
-					{field.label}
-					<input
-						name={field.value}
-						type="text"
-						value={form[field.value] ?? ''}
-						onChange={handle_change}
-						className="edit-form-input"
-						autoComplete="off"
-						disabled={loading}
-					/>
-				</label>
-			))}
+			<div className="edit-form-fields-row">
+				{fields.map((field) => (
+					<label key={field.value} className="edit-form-label">
+						{field.label}
+						<input
+							name={field.value}
+							type="text"
+							value={form[field.value] ?? ''}
+							onChange={handle_change}
+							className="edit-form-input"
+							autoComplete="off"
+							disabled={loading}
+						/>
+					</label>
+				))}
+			</div>
 			{(form_error || error) && <div className="edit-form-error">{form_error || error}</div>}
 			<div className="edit-form-btns">
 				<Button type="submit" class_name="mini-button" disabled={loading}>
