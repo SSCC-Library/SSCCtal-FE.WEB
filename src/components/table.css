@@ -25,20 +25,7 @@
 	background: #fafbfc;
 }
 
-/* 상태별 컬러 예시 */
-.status-cell.대여중 {
-	background: #ffeaea;
-	color: #e64b4b;
-	font-weight: 600;
-}
-
-.status-cell.반납완료 {
-	background: #eaffea;
-	color: #228b22;
-	font-weight: 600;
-}
-
-/* 버튼 예시 */
+/* 테이블 내 버튼 */
 .custom-table button {
 	padding: 6px 12px;
 	border: none;
@@ -74,8 +61,4 @@
 .pagination button:disabled {
 	opacity: 0.3;
 	cursor: not-allowed;
-}
-.pagination select {
-	margin-left: 10px;
-	font-size: 14px;
 }
