@@ -1,21 +1,27 @@
+/*
+공통 테이블 컴포넌트
+- columns: 테이블 컬럼 배열 (tanstack/react-table v8)
+- data: 테이블 데이터 배열
+- page, size, total: 현재 페이지, 페이지당 개수, 전체 데이터 개수
+- onPageChange: 페이지 변경 시 호출
+- onSizeChange: 페이지 사이즈 변경 시 호출
+- onRowClick: 행 클릭 시 호출
+*/
+
 import React from 'react';
 import {
 	useReactTable,
 	getCoreRowModel,
 	getPaginationRowModel,
 	flexRender,
-	createColumnHelper,
 } from '@tanstack/react-table';
 import './table.css';
-
-const columHelper = createColumnHelper();
 
 function Table({ columns, data, page, size, total, onPageChange, onSizeChange, onRowClick }) {
 	const table = useReactTable({
 		data,
 		columns,
-		// pageCount: Math.ceil(total / size),
-		pageCount: 2,
+		pageCount: Math.ceil(total / size),
 		state: {
 			pagination: {
 				pageIndex: page - 1, // 1-base to 0-base
@@ -33,18 +39,17 @@ function Table({ columns, data, page, size, total, onPageChange, onSizeChange, o
 			} else {
 				next = updater;
 			}
-			// pageIndex(0-base), pageSize
 			if (next.pageIndex !== undefined && next.pageIndex !== page - 1)
 				onPageChange(next.pageIndex + 1);
 			if (next.pageSize !== undefined && next.pageSize !== size) onSizeChange(next.pageSize);
 		},
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
-		manual: true, // tanstack v8에서는 manualPagination만 써도 됨
 	});
 
 	return (
 		<>
+			{/* 테이블 렌더링 */}
 			<table className="custom-table">
 				<thead>
 					{table.getHeaderGroups().map((headerGroup) => (
@@ -94,8 +99,7 @@ function Table({ columns, data, page, size, total, onPageChange, onSizeChange, o
 					{'<'}
 				</button>
 				<span>
-					{table.getState().pagination.pageIndex + 1}
-					{/* {table.getState().pagination.pageIndex + 1} / {table.getPageCount()} */}
+					{table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
 				</span>
 				<button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
 					{'>'}
@@ -106,16 +110,6 @@ function Table({ columns, data, page, size, total, onPageChange, onSizeChange, o
 				>
 					{'>>'}
 				</button>
-				{/* <select
-					value={table.getState().pagination.pageSize}
-					onChange={(e) => table.setPageSize(Number(e.target.value))}
-				>
-					{[10, 20, 30, 40, 50].map((size) => (
-						<option key={size} value={size}>
-							{size}개씩
-						</option>
-					))}
-				</select> */}
 			</div>
 		</>
 	);
