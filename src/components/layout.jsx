@@ -1,3 +1,9 @@
+/*
+레이아웃 컴포넌트
+- 전체 페이지 기본 구조 담당 (Nav + 페이지 내용)
+- <Outlet />에 각 라우트별 페이지가 렌더됨
+*/
+
 import Nav from './nav';
 import { Outlet } from 'react-router-dom';
 import './layout.css';
