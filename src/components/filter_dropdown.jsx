@@ -1,3 +1,8 @@
+/*
+검색 필터 컴포넌트
+- 옵션 동적 생성, 바깥 클릭 자동 닫힘
+*/
+
 import { useState, useRef, useEffect } from 'react';
 import './filter_dropdown.css';
 
