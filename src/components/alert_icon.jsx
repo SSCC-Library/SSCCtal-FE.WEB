@@ -1,5 +1,10 @@
+/*
+알림 아이콘 컴포넌트
+알림 아이콘 클릭시 드롭다운 토글 (바깥 클릭시 자동 닫힘 처리)
+추후 요청 사항 페이지와 함께 개발 예정
+*/
+
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import './alert_icon.css';
 
 function AlertIcon({ alerts = [] }) {
@@ -18,11 +23,7 @@ function AlertIcon({ alerts = [] }) {
 
 	return (
 		<div className="alert-icon-wrap" ref={ref}>
-			<span
-				className={`alert-icon${has_alert ? ' has-alert' : ''}`}
-				onClick={() => set_open((v) => !v)}
-				tabIndex={0}
-			>
+			<span className="alert-icon" onClick={() => set_open((v) => !v)} tabIndex={0}>
 				<span role="img" aria-label="알림">
 					🔔
 				</span>
@@ -35,9 +36,9 @@ function AlertIcon({ alerts = [] }) {
 						<div className="alert-dropdown-empty">새로운 요청 없음</div>
 					) : (
 						alerts.map((alert, i) => (
-							<Link to="/requests" key={i}>
-								<div className="alert-dropdown-item">{alert.message}</div>
-							</Link>
+							<div className="alert-dropdown-item" key={i}>
+								{alert.message}
+							</div>
 						))
 					)}
 				</div>
