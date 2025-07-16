@@ -13,9 +13,7 @@
 	outline: none;
 	user-select: none;
 }
-.alert-icon.has-alert {
-	color: #ff5252;
-}
+
 .alert-badge {
 	position: absolute;
 	top: 3px;
