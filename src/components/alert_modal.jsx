@@ -25,7 +25,7 @@ function AlertModal({ on_close, children, width = 400, max_width = 600 }) {
 		<div className="alert-backdrop" onClick={on_close} tabIndex={-1}>
 			<div
 				className="alert-modal"
-				style={{ minWidth: width, maxWidth: max_width, textAlign: 'left' }}
+				style={{ minWidth: width, maxWidth: max_width }}
 				onClick={(e) => e.stopPropagation()} // 바깥 클릭 닫기, 안쪽 클릭 방지
 			>
 				{children}
