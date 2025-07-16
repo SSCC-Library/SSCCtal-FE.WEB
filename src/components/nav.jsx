@@ -1,12 +1,14 @@
+/*
+상단 네비게이션 바
+- 주요 메뉴/로고/알림/관리자 영역 포함
+*/
+
 import React from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import AlertIcon from './alert_icon';
 import './nav.css';
 
 function Nav() {
-	const location = useLocation();
-	const current = location.pathname;
-
 	const menus = [
 		{ to: '/items', label: '물품 관리' },
 		{ to: '/rentals', label: '대여 기록' },
@@ -15,15 +17,8 @@ function Nav() {
 		{ to: '/requests', label: '요청 사항 ' },
 	];
 
-	const alerts = [
-		{
-			message: '회원정보 수정 요청이 있습니다.',
-			onClick: () => {
-				/* 상세 페이지 이동 등 */
-			},
-		},
-		{ message: '회원정보 수정 요청이 있습니다.' },
-	];
+	//추후 알림 메세지 등록
+	const alerts = '';
 
 	return (
 		<div className="nav-container">
