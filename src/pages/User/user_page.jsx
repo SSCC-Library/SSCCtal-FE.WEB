@@ -150,7 +150,7 @@ function UserPage() {
 				set_error('검색 결과 없음');
 			}
 		} catch (err) {
-			set_error('물품 목록 불러오기 실패');
+			set_error('회원 목록 불러오기 실패');
 		}
 	};
 
