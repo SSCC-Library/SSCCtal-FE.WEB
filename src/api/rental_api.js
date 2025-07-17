@@ -63,15 +63,12 @@ export const get_overdue_detail = (rental_id) =>
 	fetch_detail({ endpoint: 'overdues', id: rental_id });
 
 //강제 반납 처리
-export const force_return = async (copy_item_id) => {
+export const force_return = async (rental_id) => {
 	try {
-		const res = await axios.post(
-			`${BASE_URL}/admin/rentals/${copy_item_id}/return`,
-			AUTH_HEADER
-		);
+		const res = await axios.post(`${BASE_URL}/admin/rentals/${rental_id}/return`, AUTH_HEADER);
 		return res.data;
 	} catch (error) {
-		console.error('강제 반납 처리 실패:', error);
+		console.error('강제 반납 처리 실패', error);
 		throw error;
 	}
 };
