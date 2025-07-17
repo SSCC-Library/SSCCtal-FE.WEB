@@ -11,6 +11,7 @@ import OverduePage from '@/pages/Overdue/overdue_page';
 import UserPage from '@/pages/User/user_page';
 import RequestPage from './pages/Request/request_page';
 import '@/css/reset.css';
+import '@/css/global.css';
 
 function Main() {
 	return (
