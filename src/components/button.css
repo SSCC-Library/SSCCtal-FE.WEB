@@ -28,4 +28,5 @@
 	padding: 0.4em 1em;
 	font-size: 0.96em;
 	border-radius: 0.7em;
+	min-width: 5em;
 }
