@@ -1,6 +1,11 @@
+/*
+대여 기록 페이지
+- 대여 목록/검색/상세 정보/강제 반납 기능 제공
+*/
+
 import React, { useMemo, useState, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { get_rental_list, get_rental_detail } from '../../api/rental_api';
+import { get_rental_list, get_rental_detail, force_return } from '../../api/rental_api';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import AlertModal from '../../components/alert_modal';
@@ -13,56 +18,20 @@ function RentalPage() {
 	const [search_type, set_search_type] = useState('');
 	const [search_text, set_search_text] = useState('');
 	const [selected_row, set_selected_row] = useState(null);
+	const [modal_return, set_modal_return] = useState({ open: false, row: null });
+	const [modal_message, set_modal_message] = useState({ open: false, message: '', type: 'info' });
 
 	const [data, set_data] = useState([]);
-	const [loading, set_loading] = useState(false);
 	const [error, set_error] = useState(null);
 
 	const [detail_data, set_detail_data] = useState([]);
-	const [detail_loading, set_detail_loading] = useState(false);
 	const [detail_error, set_detail_error] = useState(null);
 
 	const [page, set_page] = useState(1);
 	const [size, set_size] = useState(10);
+	const [total, set_total] = useState(0);
 
-	//대여 기록 리스트 가져오기
-	const fetch_rentals = async (page, size) => {
-		set_loading(true);
-		set_error(null);
-		try {
-			const res = await get_rental_list(page, size, search_type, search_text);
-			set_data(res.items || []);
-		} catch (err) {
-			set_error('대여 기록 불러오기 실패');
-		}
-		set_loading(false);
-	};
-
-	//대여 기록 상세 정보 가져오기
-	const fetch_detail = async (rental_id) => {
-		set_detail_loading(true);
-		set_detail_error(null);
-		try {
-			const res = await get_rental_detail(rental_id);
-			set_detail_data(res);
-		} catch (err) {
-			set_detail_error('상세 정보 불러오기 실패');
-		}
-		set_detail_loading(false);
-	};
-
-	useEffect(() => {
-		fetch_rentals(page, size);
-	}, [search_type, search_text, page, size]);
-
-	const handle_row_click = (row) => {
-		set_selected_row(row);
-		fetch_detail(row.rental_id);
-	};
-
-	const handle_search = () => {
-		set_page(1);
-	};
+	//컬럼 정의
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor('rental_id', {
@@ -104,7 +73,16 @@ function RentalPage() {
 			columnHelper.display({
 				id: 'manage',
 				header: '관리',
-				cell: (info) => <button>수정</button>,
+				cell: (info) => (
+					<button
+						onClick={(e) => {
+							e.stopPropagation();
+							set_modal_return({ open: true, row: info.row.original });
+						}}
+					>
+						반납
+					</button>
+				),
 				meta: {
 					style: { padding: '8px 6px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
 				},
@@ -113,6 +91,7 @@ function RentalPage() {
 		[]
 	);
 
+	//검색용 필터 옵션 추출
 	const column_options = columns
 		.filter((col) => col.accessorKey) // accessor 컬럼만 골라냄
 		.map((col) => ({
@@ -120,31 +99,69 @@ function RentalPage() {
 			label: typeof col.header === 'string' ? col.header : col.accessorKey,
 		}));
 
-	const mock_data = useMemo(
-		() => [
-			{
-				number: '1',
-				itemName: '컴퓨팅 사고',
-				type: '책',
-				user: '정영인',
-				student_id: '12345678',
-				rentalDate: '2025.06.20',
-				returnDate: '2025.07.01',
-				returnState: '반납 완료',
-			},
-			{
-				number: '2',
-				itemName: '충전기',
-				type: '물품',
-				user: '원영진',
-				student_id: '87654321',
-				rentalDate: '2025.06.20',
-				returnDate: '-',
-				returnState: '대여중',
-			},
-		],
-		[]
-	);
+	//대여 기록 리스트 가져오기
+	const fetch_rentals = async (page, size) => {
+		set_error(null);
+		try {
+			const res = await get_rental_list(page, size, search_type, search_text);
+			if (res.success) {
+				set_data(res.items || []);
+				set_total(res.total || 17);
+			} else {
+				set_error('검색 결과 없음');
+			}
+		} catch (err) {
+			set_error('대여 기록 불러오기 실패');
+		}
+	};
+
+	//대여 기록 상세 정보 가져오기
+	const fetch_detail = async (rental_id) => {
+		set_detail_error(null);
+		try {
+			const res = await get_rental_detail(rental_id);
+			if (res.success) {
+				set_detail_data(res);
+			} else {
+				set_error('검색 결과 없음');
+			}
+		} catch (err) {
+			set_detail_error('상세 정보 불러오기');
+		}
+	};
+
+	useEffect(() => {
+		fetch_rentals(page, size);
+	}, [search_type, search_text, page, size]);
+
+	const handle_row_click = (row) => {
+		set_selected_row(row);
+		fetch_detail(row.rental_id);
+	};
+
+	const handle_search = () => {
+		set_page(1);
+	};
+
+	//강제 반납 처리
+	const handle_force_return = async (rental_id) => {
+		try {
+			await force_return(rental_id);
+			set_modal_return({ open: false, row: null });
+			set_modal_message({
+				open: true,
+				message: '강제 반납 성공',
+				type: 'success',
+			});
+		} catch (err) {
+			set_modal_return({ open: false, row: null });
+			set_modal_message({
+				open: true,
+				message: '강제 반납 실패',
+				type: 'error',
+			});
+		}
+	};
 
 	return (
 		<div className="rental-container">
@@ -158,33 +175,84 @@ function RentalPage() {
 					on_search={handle_search}
 				/>
 			</div>
-			<Table
-				columns={columns}
-				data={data}
-				page={page}
-				size={size}
-				onPageChange={set_page}
-				onSizeChange={set_size}
-				onRowClick={handle_row_click}
-			/>
+			{!error && (
+				<Table
+					columns={columns}
+					data={data}
+					page={page}
+					size={size}
+					total={total}
+					onPageChange={set_page}
+					onSizeChange={set_size}
+					onRowClick={handle_row_click}
+				/>
+			)}
+
+			{/* 에러 메세지 */}
+			{error && <div className="error-text">{error}</div>}
+
+			{/* 강제 반납 모달 */}
+			{modal_return.open && (
+				<AlertModal on_close={() => set_modal_return({ open: false, row: null })}>
+					<div className="force-title">반납 하시겠습니까? </div>
+					<div className="force-wrap">
+						<Button
+							class_name="mini-button"
+							onClick={() => handle_force_return(modal_return.row.rental_id)}
+						>
+							예
+						</Button>
+						<Button
+							class_name="mini-button"
+							onClick={() => set_modal_return({ open: false, row: null })}
+						>
+							아니오
+						</Button>
+					</div>
+				</AlertModal>
+			)}
+
+			{/* 성공/실패 메시지 모달 */}
+			{modal_message.open && (
+				<AlertModal
+					on_close={() => set_modal_message({ open: false, message: '', type: '' })}
+				>
+					<div className="error-text">{modal_message.message}</div>
+					<Button
+						class_name="mini-button"
+						onClick={() => set_modal_message({ open: false, message: '', type: '' })}
+						style={{ margin: '1.5em auto 0 auto', display: 'block' }}
+					>
+						확인
+					</Button>
+				</AlertModal>
+			)}
+
+			{/* 상세 모달 */}
 			{selected_row && (
 				<AlertModal on_close={() => set_selected_row(null)}>
-					<div className="rental-modal-title">대여 상세 정보</div>
-					<div className="rental-modal-info">
-						{Object.entries(detail_data).map(([key, value]) => (
-							<div key={key} className="rental-modal-row">
-								<span className="rental-key">{key}:</span>
-								<span className="rental-value">{value}</span>
+					{detail_error ? (
+						<div className="error-text">{detail_error}</div>
+					) : detail_data ? (
+						<>
+							<div className="rental-modal-title">대여 상세 정보</div>
+							<div className="rental-modal-info">
+								{Object.entries(detail_data).map(([key, value]) => (
+									<div key={key} className="rental-modal-row">
+										<span className="rental-key">{key}:</span>
+										<span className="rental-value">{value}</span>
+									</div>
+								))}
 							</div>
-						))}
-					</div>
-					<Button
-						onClick={() => set_selected_row(null)}
-						class_name="mini-button"
-						style={{ marginTop: '1.5em' }}
-					>
-						닫기
-					</Button>
+							<Button
+								onClick={() => set_selected_row(null)}
+								class_name="mini-button"
+								style={{ marginTop: '1.5em' }}
+							>
+								닫기
+							</Button>
+						</>
+					) : null}
 				</AlertModal>
 			)}
 		</div>
