@@ -217,7 +217,11 @@ function RentalPage() {
 				<AlertModal
 					on_close={() => set_modal_message({ open: false, message: '', type: '' })}
 				>
-					<div className="error-text">{modal_message.message}</div>
+					<div
+						className={modal_message.type === 'success' ? 'success-text' : 'error-text'}
+					>
+						{modal_message.message}
+					</div>
 					<Button
 						class_name="mini-button"
 						onClick={() => set_modal_message({ open: false, message: '', type: '' })}
