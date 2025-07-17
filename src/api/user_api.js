@@ -62,3 +62,17 @@ export const edit_user = async (student_id, user_data) => {
 		throw error;
 	}
 };
+
+export const delete_user = async (student_id) => {
+	try {
+		const res = await axios.post(
+			`${BASE_URL}/admin/users/delete/${student_id}`,
+			user_data,
+			AUTH_HEADER
+		);
+		return res.data;
+	} catch (error) {
+		console.error('회원 삭제 실패:', error);
+		throw error;
+	}
+};
