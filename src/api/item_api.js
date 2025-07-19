@@ -5,7 +5,7 @@
 */
 
 import axios from 'axios';
-const BASE_URL = import.meta.env.VITE_BACKEND_TEST_URL;
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 const ADMIN_TOKEN = 'mock-admin-token';
 
 const AUTH_HEADER = {
@@ -16,9 +16,9 @@ const AUTH_HEADER = {
 
 export const get_item_list = async (page = 1, size = 10, search_type = '', search_text = '') => {
 	try {
-		const res = await axios.get(`${BASE_URL}/admin/items`, {
+		const res = await axios.get(`${BASE_URL}/api/v1/admin/items`, {
 			params: { page, size, search_type, search_text },
-			...AUTH_HEADER,
+			// ...AUTH_HEADER,
 		});
 		return res.data;
 	} catch (error) {
@@ -26,9 +26,10 @@ export const get_item_list = async (page = 1, size = 10, search_type = '', searc
 		throw error;
 	}
 };
-export const get_item_detail = async (item_id) => {
+export const get_item_detail = async (copy_id) => {
 	try {
-		const res = await axios.get(`${BASE_URL}/admin/items/${item_id}`, AUTH_HEADER);
+		// const res = await axios.get(`${BASE_URL}/admin/items/${item_id}`, AUTH_HEADER);
+		const res = await axios.get(`${BASE_URL}/api/v1/admin/items/${copy_id}`);
 		return res.data;
 	} catch (error) {
 		console.error('물품 상세 조회 실패:', error);

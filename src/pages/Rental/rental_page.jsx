@@ -5,7 +5,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { get_rental_list, get_rental_detail, force_return } from '../../api/rental_api';
+import { get_rental_list, get_rental_detail, edit_rental_status } from '../../api/rental_api';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import AlertModal from '../../components/alert_modal';
@@ -146,7 +146,7 @@ function RentalPage() {
 	//강제 반납 처리
 	const handle_force_return = async (rental_id) => {
 		try {
-			await force_return(rental_id);
+			await edit_rental_status(rental_id, 'returned');
 			set_modal_return({ open: false, row: null });
 			set_modal_message({
 				open: true,

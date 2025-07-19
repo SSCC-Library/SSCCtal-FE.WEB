@@ -34,7 +34,7 @@ function ItemPage() {
 	//컬럼 정의
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor('item_id', {
+			columnHelper.accessor('copy_id', {
 				header: '물품 번호',
 				meta: {
 					style: { padding: '8px 10px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
@@ -77,12 +77,20 @@ function ItemPage() {
 		}));
 
 	//물품 리스트 가져오기
-	const fetch_items = async (page, size) => {
+	const fetch_items = async (page) => {
 		set_error(null);
 		try {
-			const res = await get_item_list(page, size, search_type, search_text);
+			const res = await get_item_list(page, search_type, search_text);
 			if (res.success) {
-				set_data(res.items || []);
+				const parsed_data = (res.data || []).map((d) => ({
+					copy_id: d.item_copy.copy_id,
+					identifier_code: d.item_copy.identifier_code,
+					copy_status: d.item_copy.copy_status,
+					name: d.item.name,
+					type: d.item.type,
+					hashtag: d.item.hashtag,
+				}));
+				set_data(parsed_data);
 				set_total(res.total || 0);
 			} else {
 				set_error('검색 결과 없음');
@@ -93,12 +101,33 @@ function ItemPage() {
 	};
 
 	//물품 상세 정보 가져오기
-	const fetch_detail = async (item_id) => {
+	const fetch_detail = async (copy_id) => {
 		set_detail_error(null);
 		try {
-			const res = await get_item_detail(item_id);
+			const res = await get_item_detail(copy_id);
 			if (res.success) {
-				set_detail_data(res);
+				const d = res.data;
+				const parsed_data = {
+					// item_copy 정보
+					copy_id: d.item_copy.copy_id,
+					item_id: d.item_copy.item_id,
+					identifier_code: d.item_copy.identifier_code,
+					copy_status: d.item_copy.copy_status,
+					create_date: d.item_copy.create_date,
+					update_date: d.item_copy.update_date,
+					delete_status: d.item_copy.delete_status,
+
+					// item 정보
+					name: d.item.name,
+					type: d.item.type,
+					publisher: d.item.publisher,
+					publish_date: d.item.publish_date,
+					hashtag: d.item.hashtag,
+					image_url: d.item.image_url,
+					total_count: d.item.total_count,
+					available_count: d.item.available_count,
+				};
+				set_detail_data(parsed_data);
 			} else {
 				set_error('검색 결과 없음');
 			}
@@ -108,12 +137,12 @@ function ItemPage() {
 	};
 
 	useEffect(() => {
-		fetch_items(page, size);
-	}, [search_type, search_text, page, size]);
+		fetch_items(page);
+	}, [search_type, search_text, page]);
 
 	const handle_row_click = (row) => {
 		set_selected_row(row);
-		fetch_detail(row.item_id);
+		fetch_detail(row.copy_id);
 	};
 
 	const handle_search = () => {

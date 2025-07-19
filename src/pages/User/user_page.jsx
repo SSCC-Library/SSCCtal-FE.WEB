@@ -27,7 +27,6 @@ function UserPage() {
 	const [form_error, set_form_error] = useState(null);
 
 	const [page, set_page] = useState(1);
-	const [size, set_size] = useState(10);
 	const [total, set_total] = useState(0);
 
 	//컬럼 정의
@@ -100,7 +99,7 @@ function UserPage() {
 				header: '학적',
 				meta: {
 					style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 },
-					required: true,
+					required: false,
 				},
 			}),
 			columnHelper.display({
@@ -139,12 +138,22 @@ function UserPage() {
 		}));
 
 	//회원 리스트 가져오기
-	const fetch_user = async (page, size) => {
+	const fetch_user = async (page) => {
 		set_error(null);
 		try {
-			const res = await get_user_list(page, size, search_type, search_text);
+			const res = await get_user_list(page, search_type, search_text);
 			if (res.success) {
-				set_data(res.items || []);
+				const parsed_data = (res.data || []).map((d) => ({
+					student_id: d.student_id,
+					name: d.name,
+					email: d.email,
+					phone_number: d.phone_number,
+					gender: d.gender,
+					major: d.major,
+					major2: d.major2,
+					minor: d.minor,
+				}));
+				set_data(parsed_data);
 				set_total(res.total || 0);
 			} else {
 				set_error('검색 결과 없음');
@@ -155,8 +164,8 @@ function UserPage() {
 	};
 
 	useEffect(() => {
-		fetch_user(page, size);
-	}, [search_type, search_text, page, size]);
+		fetch_user(page);
+	}, [search_type, search_text, page]);
 
 	const handle_search = () => {
 		set_page(1);
@@ -198,7 +207,7 @@ function UserPage() {
 				}
 			}
 			set_edit_modal({ open: false, item: null, mode: 'add' });
-			fetch_user(page, size); // 저장 후 목록 갱신
+			fetch_user(page); // 저장 후 목록 갱신
 		} catch (err) {
 			set_form_error('저장 실패');
 		}
@@ -218,7 +227,7 @@ function UserPage() {
 				set_delete_modal({ open: false, student_id: null });
 				set_modal_message({ open: true, message: '회원 삭제 실패', type: 'error' });
 			}
-			fetch_user(page, size);
+			fetch_user(page);
 		} catch (err) {
 			set_delete_modal({ open: false, student_id: null });
 			set_modal_message({ open: true, message: '회원 삭제 실패', type: 'error' });
@@ -243,10 +252,8 @@ function UserPage() {
 					columns={columns}
 					data={data}
 					page={page}
-					size={size}
 					total={total}
 					onPageChange={set_page}
-					onSizeChange={set_size}
 				/>
 			)}
 

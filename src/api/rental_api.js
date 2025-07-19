@@ -2,13 +2,11 @@
 대여 기록 관련 API
 - 대여 기록 조회
 - 대여 기록 상세 조회
-- 연체 기록 조회
-- 연체 기록 상세 조회
-- 강제 반납 처리
+- 대여 상태 변경
 */
 
 import axios from 'axios';
-const BASE_URL = import.meta.env.VITE_BACKEND_TEST_URL;
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 const ADMIN_TOKEN = 'mock-admin-token';
 
 const AUTH_HEADER = {
@@ -17,55 +15,44 @@ const AUTH_HEADER = {
 	},
 };
 
-//리스트 조회용 함수
-const fetch_list = async ({
-	endpoint,
+//대여/연체 리스트 조회
+export const get_rental_list = async ({
 	page = 1,
-	size = 10,
 	search_type = '',
 	search_text = '',
-}) => {
+	rental_status = '',
+} = {}) => {
 	try {
-		const res = await axios.get(`${BASE_URL}/admin/${endpoint}`, {
-			params: { page, size, search_type, search_text },
-			...AUTH_HEADER,
+		const res = await axios.get(`${BASE_URL}/api/v1/admin/rentals`, {
+			params: { page, search_type, search_text, rental_status },
+			// ...AUTH_HEADER,
 		});
 		return res.data;
 	} catch (error) {
-		console.error(`${endpoint} 리스트 조회 실패`, error);
+		console.error('대여/연체 기록 리스트 조회 실패:', error);
 		throw error;
 	}
 };
 
-//상세정보 조회용 함수
-const fetch_detail = async ({ endpoint, id }) => {
+//대여 정보 상세 조회
+export const get_rental_detail = async (rental_id) => {
 	try {
-		const res = await axios.get(`${BASE_URL}/admin/${endpoint}/${id}`, AUTH_HEADER);
+		const res = await axios.get(`${BASE_URL}/api/v1/admin/rentals/${rental_id}`);
 		return res.data;
 	} catch (error) {
-		console.error(`${endpoint} 상세 조회 실패`, error);
+		console.error('대여 기록 상세 조회 실패:', error);
 		throw error;
 	}
 };
 
-//리스트 조회 (대여)
-export const get_rental_list = (params = {}) => fetch_list({ endpoint: 'rentals', ...params });
-
-//리스트 조회 (연체)
-export const get_overdue_list = (params = {}) => fetch_list({ endpoint: 'overdues', ...params });
-
-//상세정보 조회 (대여)
-export const get_rental_detail = (copy_item_id) =>
-	fetch_detail({ endpoint: 'rentals', id: copy_item_id });
-
-//상세정보 조회 (연체)
-export const get_overdue_detail = (rental_id) =>
-	fetch_detail({ endpoint: 'overdues', id: rental_id });
-
-//강제 반납 처리
-export const force_return = async (rental_id) => {
+//대여 상태 변경
+export const edit_rental_status = async (rental_id, rental_status) => {
 	try {
-		const res = await axios.post(`${BASE_URL}/admin/rentals/${rental_id}/return`, AUTH_HEADER);
+		const res = await axios.post(
+			`${BASE_URL}/api/v1/admin/rentals/${rental_id}`,
+			{ rental_status: rental_status },
+			AUTH_HEADER
+		);
 		return res.data;
 	} catch (error) {
 		console.error('강제 반납 처리 실패', error);

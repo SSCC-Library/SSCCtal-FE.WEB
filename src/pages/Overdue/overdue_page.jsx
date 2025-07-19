@@ -5,7 +5,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { get_overdue_list, get_overdue_detail, force_return } from '../../api/rental_api';
+import { get_rental_list, get_rental_detail, edit_rental_status } from '../../api/rental_api';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import AlertModal from '../../components/alert_modal';
@@ -93,7 +93,13 @@ function OverduePage() {
 	const fetch_overdue = async (page, size) => {
 		set_error(null);
 		try {
-			const res = await get_overdue_list(page, size, search_type, search_text);
+			const res = await get_rental_list(
+				page,
+				size,
+				search_type,
+				search_text,
+				(rental_status = 'overdue')
+			);
 			if (res.success) {
 				set_data(res.items || []);
 				set_total(res.total || 17);
@@ -109,7 +115,7 @@ function OverduePage() {
 	const fetch_detail = async (rental_id) => {
 		set_detail_error(null);
 		try {
-			const res = await get_overdue_detail(rental_id);
+			const res = await get_rental_detail(rental_id);
 			if (res.success) {
 				set_detail_data(res);
 			} else {
@@ -136,7 +142,7 @@ function OverduePage() {
 	//강제 반납 처리
 	const handle_force_return = async (rental_id) => {
 		try {
-			await force_return(rental_id);
+			await edit_rental_status(rental_id, 'returned');
 			set_modal_return({ open: false, row: null });
 			set_modal_message({
 				open: true,
