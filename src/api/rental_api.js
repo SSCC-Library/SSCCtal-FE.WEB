@@ -20,7 +20,7 @@ export const get_rental_list = async ({
 	page = 1,
 	search_type = '',
 	search_text = '',
-	rental_status = '',
+	rental_status = null,
 } = {}) => {
 	try {
 		const res = await axios.get(`${BASE_URL}/api/v1/admin/rentals`, {
