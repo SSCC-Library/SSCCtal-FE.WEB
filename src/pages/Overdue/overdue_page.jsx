@@ -17,6 +17,7 @@ const columnHelper = createColumnHelper();
 function OverduePage() {
 	const [search_type, set_search_type] = useState('');
 	const [search_text, set_search_text] = useState('');
+	const [input_text, set_input_text] = useState('');
 	const [selected_row, set_selected_row] = useState(null);
 	const [modal_return, set_modal_return] = useState({ open: false, row: null });
 	const [modal_message, set_modal_message] = useState({ open: false, message: '', type: 'info' });
@@ -28,7 +29,6 @@ function OverduePage() {
 	const [detail_error, set_detail_error] = useState(null);
 
 	const [page, set_page] = useState(1);
-	const [size, set_size] = useState(10);
 	const [total, set_total] = useState(0);
 
 	//컬럼 정의
@@ -90,19 +90,22 @@ function OverduePage() {
 		}));
 
 	//연체 기록 리스트 가져오기
-	const fetch_overdue = async (page, size) => {
+	const fetch_overdue = async (page) => {
 		set_error(null);
 		try {
-			const res = await get_rental_list(
-				page,
-				size,
-				search_type,
-				search_text,
-				(rental_status = 'overdue')
-			);
+			const res = await get_rental_list(page, search_type, search_text, 'overdue');
 			if (res.success) {
-				set_data(res.items || []);
-				set_total(res.total || 17);
+				const parsed_data = (res.data || []).map((d) => ({
+					rental_id: d.rental.rental_id,
+					name: null,
+					type: null,
+					user_name: d.user.name,
+					student_id: d.user.student_id,
+					item_borrow_date: d.rental.item_borrow_date,
+					overdue: d.rental.overdue,
+				}));
+				set_data(parsed_data);
+				set_total(res.total || 0);
 			} else {
 				set_error('검색 결과 없음');
 			}
@@ -117,7 +120,20 @@ function OverduePage() {
 		try {
 			const res = await get_rental_detail(rental_id);
 			if (res.success) {
-				set_detail_data(res);
+				const d = res.data;
+				const parsed_data = {
+					rental_id: d.rental_id,
+					student_id: d.student_id,
+					copy_id: d.copy_id,
+					rental_status: d.rental_status,
+					item_borrow_date: d.item_borrow_date,
+					expectation_return_date: d.expectation_return_date,
+					item_return_date: d.item_return_date,
+					overdue: d.overdue,
+					create_date: d.create_date,
+					update_date: d.update_date,
+				};
+				set_detail_data(parsed_data);
 			} else {
 				set_error('검색 결과 없음');
 			}
@@ -127,8 +143,8 @@ function OverduePage() {
 	};
 
 	useEffect(() => {
-		fetch_overdue(page, size);
-	}, [search_type, search_text, page, size]);
+		fetch_overdue(page);
+	}, [search_type, search_text, page]);
 
 	const handle_row_click = (row) => {
 		set_selected_row(row);
@@ -137,6 +153,7 @@ function OverduePage() {
 
 	const handle_search = () => {
 		set_page(1);
+		set_search_text(input_text);
 	};
 
 	//강제 반납 처리
@@ -166,8 +183,8 @@ function OverduePage() {
 					filter_options={column_options}
 					search_type={search_type}
 					set_search_type={set_search_type}
-					search_text={search_text}
-					set_search_text={set_search_text}
+					search_text={input_text}
+					set_search_text={set_input_text}
 					on_search={handle_search}
 				/>
 			</div>
@@ -176,10 +193,8 @@ function OverduePage() {
 					columns={columns}
 					data={data}
 					page={page}
-					size={size}
 					total={total}
 					onPageChange={set_page}
-					onSizeChange={set_size}
 					onRowClick={handle_row_click}
 				/>
 			)}
