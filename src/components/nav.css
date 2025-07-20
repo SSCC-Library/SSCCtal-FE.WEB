@@ -1,21 +1,22 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
 /* 전체 네비게이션 영역 */
 .nav-container {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: 20px;
-	font-family: 'Pretendard', sans-serif;
+	width: 100%;
+	max-width: 1600px;
+	margin: 0 auto;
 }
 
 /* 헤더(로고, 사용자명) */
 .header {
 	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	background-color: white;
-	padding: 20px 40px;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	background-color: #fff;
+	padding: 24px 40px 16px 40px;
+	box-sizing: border-box;
 }
 
 /* 로고 영역 (이미지+텍스트) */
@@ -24,60 +25,42 @@
 	width: 240px;
 	height: 120px;
 	object-fit: contain;
-}
-
-/* 헤더-로고 텍스트 */
-.logo-text {
-	font-size: 24px;
-	line-height: 1.4;
-	margin-left: 15px;
-	color: #000000;
-}
-.logo-text strong {
-	font-weight: 700;
+	display: block;
 }
 
 .admin-box {
 	display: flex;
-	border: none;
-	padding: 10px 20px;
+	align-items: center;
+	font-weight: 500;
 	font-size: 20px;
+	color: #222;
 	cursor: pointer;
-	align-self: flex-end;
-	margin-top: -90px;
 }
 /* 사용자명 */
 .admin {
-	border: none;
-	padding: 10px 20px;
-	font-size: 20px;
-	cursor: pointer;
-	align-self: flex-end;
+	padding: 8px 10px;
 }
 
 /* 헤더와 메뉴 사이 구분선 */
 .divider {
-	width: 95vw;
-	height: 3px;
 	background-color: #d9d9d9;
+	width: 100%;
+	max-width: 95vw;
+	height: 2px;
+	margin: 0 auto;
 }
 
 /* 글로벌 네비게이션(메뉴) */
 .gnb {
 	display: flex;
 	justify-content: center;
-	gap: 160px;
-	margin-top: 10px;
+	align-items: center;
+	gap: 100px;
+	margin-top: 0.5rem;
 	font-size: 24px;
 	font-weight: 600;
-	list-style: none; /* li 점 삭제 */
+	list-style: none;
 	padding: 0;
-}
-
-/* 메뉴 링크 */
-.gnb a {
-	text-decoration: none;
-	color: black;
 }
 
 .gnb-link {
@@ -97,5 +80,5 @@
 .gnb-link.active {
 	background-color: #4682b4;
 	color: #fff;
-	font-weight: bold;
+	font-weight: 700;
 }

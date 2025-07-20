@@ -1,3 +1,8 @@
+/*
+검색바 컴포넌트
+- InputField + FilterDropDown 조합
+*/
+
 import InputField from './input_field';
 import FilterDropDown from './filter_dropdown';
 import './search_bar.css';

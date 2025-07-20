@@ -1,5 +1,11 @@
+/*
+연체 관리 페이지
+- 연체 내역 목록, 검색, 상세 모달, 강제 반납
+*/
+
 import React, { useMemo, useState, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
+import { get_rental_list, get_rental_detail, edit_rental_status } from '../../api/rental_api';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import AlertModal from '../../components/alert_modal';
@@ -11,58 +17,21 @@ const columnHelper = createColumnHelper();
 function OverduePage() {
 	const [search_type, set_search_type] = useState('');
 	const [search_text, set_search_text] = useState('');
+	const [input_text, set_input_text] = useState('');
 	const [selected_row, set_selected_row] = useState(null);
+	const [modal_return, set_modal_return] = useState({ open: false, row: null });
+	const [modal_message, set_modal_message] = useState({ open: false, message: '', type: 'info' });
 
 	const [data, set_data] = useState([]);
-	const [loading, set_loading] = useState(false);
 	const [error, set_error] = useState(null);
 
 	const [detail_data, set_detail_data] = useState([]);
-	const [detail_loading, set_detail_loading] = useState(false);
 	const [detail_error, set_detail_error] = useState(null);
 
 	const [page, set_page] = useState(1);
-	const [size, set_size] = useState(10);
+	const [total, set_total] = useState(0);
 
-	//연체 기록 리스트 가져오기
-	const fetch_overdue = async (page, size) => {
-		set_loading(true);
-		set_error(null);
-		try {
-			const res = await get_overdue_list(page, size, search_type, search_text);
-			set_data(res.items || []);
-		} catch (err) {
-			set_error('연체 기록 불러오기 실패');
-		}
-		set_loading(false);
-	};
-
-	//연체 기록 상세 정보 가져오기
-	const fetch_detail = async (rental_id) => {
-		set_detail_loading(true);
-		set_detail_error(null);
-		try {
-			const res = await get_overdue_detail(rental_id);
-			set_detail_data(res);
-		} catch (err) {
-			set_detail_error('연체 정보 불러오기 실패');
-		}
-		set_detail_loading(false);
-	};
-
-	useEffect(() => {
-		fetch_overdue();
-	}, [search_type, search_text, page, size]);
-
-	const handle_row_click = (row) => {
-		set_selected_row(row);
-		fetch_detail(row.rental_id);
-	};
-
-	const handle_search = () => {
-		set_page(1);
-	};
-
+	//컬럼 정의
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor('name', {
@@ -89,17 +58,21 @@ function OverduePage() {
 			}),
 			columnHelper.accessor('overdue', {
 				header: '연체일',
-				// cell: (info) => (
-				// 	<span className={info.getValue() === '대여중' ? 'state-rent' : 'state-return'}>
-				// 		{info.getValue()}
-				// 	</span>
-				// ),
 				meta: { style: { padding: '8px 10px', minWidth: 60, maxWidth: 80 } },
 			}),
 			columnHelper.display({
 				id: 'manage',
 				header: '관리',
-				cell: (info) => <button>반납</button>,
+				cell: (info) => (
+					<button
+						onClick={(e) => {
+							e.stopPropagation();
+							set_modal_return({ open: true, row: info.row.original });
+						}}
+					>
+						반납
+					</button>
+				),
 				meta: {
 					style: { padding: '8px 6px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
 				},
@@ -108,6 +81,7 @@ function OverduePage() {
 		[]
 	);
 
+	//검색용 필터 옵션 추출
 	const column_options = columns
 		.filter((col) => col.accessorKey) // accessor 컬럼만 골라냄
 		.map((col) => ({
@@ -115,19 +89,92 @@ function OverduePage() {
 			label: typeof col.header === 'string' ? col.header : col.accessorKey,
 		}));
 
-	const mock_data = useMemo(
-		() => [
-			{
-				itemName: '우산',
-				type: '물품',
-				user: '원영진',
-				student_id: '12345678',
-				rentalDate: '2025.06.20',
-				overdueDate: '122',
-			},
-		],
-		[]
-	);
+	//연체 기록 리스트 가져오기
+	const fetch_overdue = async (page) => {
+		set_error(null);
+		try {
+			const res = await get_rental_list(page, search_type, search_text, 'overdue');
+			if (res.success) {
+				const parsed_data = (res.data || []).map((d) => ({
+					rental_id: d.rental.rental_id,
+					name: null,
+					type: null,
+					user_name: d.user.name,
+					student_id: d.user.student_id,
+					item_borrow_date: d.rental.item_borrow_date,
+					overdue: d.rental.overdue,
+				}));
+				set_data(parsed_data);
+				set_total(res.total || 0);
+			} else {
+				set_error('검색 결과 없음');
+			}
+		} catch (err) {
+			set_error('연체 기록 불러오기 실패');
+		}
+	};
+
+	//연체 기록 상세 정보 가져오기
+	const fetch_detail = async (rental_id) => {
+		set_detail_error(null);
+		try {
+			const res = await get_rental_detail(rental_id);
+			if (res.success) {
+				const d = res.data;
+				const parsed_data = {
+					rental_id: d.rental_id,
+					student_id: d.student_id,
+					copy_id: d.copy_id,
+					rental_status: d.rental_status,
+					item_borrow_date: d.item_borrow_date,
+					expectation_return_date: d.expectation_return_date,
+					item_return_date: d.item_return_date,
+					overdue: d.overdue,
+					create_date: d.create_date,
+					update_date: d.update_date,
+				};
+				set_detail_data(parsed_data);
+			} else {
+				set_error('검색 결과 없음');
+			}
+		} catch (err) {
+			set_detail_error('연체 정보 불러오기 실패');
+		}
+	};
+
+	useEffect(() => {
+		fetch_overdue(page);
+	}, [search_type, search_text, page]);
+
+	const handle_row_click = (row) => {
+		set_selected_row(row);
+		fetch_detail(row.rental_id);
+	};
+
+	const handle_search = () => {
+		set_page(1);
+		set_search_text(input_text);
+	};
+
+	//강제 반납 처리
+	const handle_force_return = async (rental_id) => {
+		try {
+			await edit_rental_status(rental_id, 'returned');
+			set_modal_return({ open: false, row: null });
+			set_modal_message({
+				open: true,
+				message: '강제 반납 성공',
+				type: 'success',
+			});
+		} catch (err) {
+			set_modal_return({ open: false, row: null });
+			set_modal_message({
+				open: true,
+				message: '강제 반납 실패',
+				type: 'error',
+			});
+		}
+	};
 
 	return (
 		<div className="overdue-container">
@@ -136,38 +183,91 @@ function OverduePage() {
 					filter_options={column_options}
 					search_type={search_type}
 					set_search_type={set_search_type}
-					search_text={search_text}
-					set_search_text={set_search_text}
+					search_text={input_text}
+					set_search_text={set_input_text}
 					on_search={handle_search}
 				/>
 			</div>
-			<Table
-				columns={columns}
-				data={data}
-				page={page}
-				size={size}
-				onPageChange={set_page}
-				onSizeChange={set_size}
-				onRowClick={handle_row_click}
-			/>
-			{selected_row && (
-				<AlertModal on_close={() => set_selected_row(null)}>
-					<div className="overdue-modal-title">연체 상세 정보</div>
-					<div className="overude-modal-info">
-						{Object.entries(detail_data).map(([key, value]) => (
-							<div key={key} className="overdue-modal-row">
-								<span className="overdue-key">{key}:</span>
-								<span className="overdue-value">{value}</span>
-							</div>
-						))}
+			{!error && (
+				<Table
+					columns={columns}
+					data={data}
+					page={page}
+					total={total}
+					onPageChange={set_page}
+					onRowClick={handle_row_click}
+				/>
+			)}
+
+			{/* 에러 메세지 */}
+			{error && <div className="error-text">{error}</div>}
+
+			{/* 강제 반납 모달 */}
+			{modal_return.open && (
+				<AlertModal on_close={() => set_modal_return({ open: false, row: null })}>
+					<div className="force-title">반납 하시겠습니까? </div>
+					<div className="force-wrap">
+						<Button
+							class_name="mini-button"
+							onClick={() => handle_force_return(modal_return.row.rental_id)}
+						>
+							예
+						</Button>
+						<Button
+							class_name="mini-button"
+							onClick={() => set_modal_return({ open: false, row: null })}
+						>
+							아니오
+						</Button>
+					</div>
+				</AlertModal>
+			)}
+
+			{/* 성공/실패 메시지 모달 */}
+			{modal_message.open && (
+				<AlertModal
+					on_close={() => set_modal_message({ open: false, message: '', type: '' })}
+				>
+					<div
+						className={modal_message.type === 'success' ? 'success-text' : 'error-text'}
+					>
+						{modal_message.message}
 					</div>
 					<Button
-						onClick={() => set_selected_row(null)}
 						class_name="mini-button"
-						style={{ marginTop: '1.5em' }}
+						onClick={() => set_modal_message({ open: false, message: '', type: '' })}
+						style={{ margin: '1.5em auto 0 auto', display: 'block' }}
 					>
-						닫기
+						확인
 					</Button>
+				</AlertModal>
+			)}
+
+			{/* 상세 정보 모달 */}
+			{selected_row && (
+				<AlertModal on_close={() => set_selected_row(null)}>
+					{detail_error ? (
+						<div className="error-text">{detail_error}</div>
+					) : detail_data ? (
+						<>
+							<div className="overdue-modal-title">연체 상세 정보</div>
+							<div className="overude-modal-info">
+								{Object.entries(detail_data).map(([key, value]) => (
+									<div key={key} className="overdue-modal-row">
+										<span className="overdue-key">{key}:</span>
+										<span className="overdue-value">{value}</span>
+									</div>
+								))}
+							</div>
+							<Button
+								onClick={() => set_selected_row(null)}
+								class_name="mini-button"
+								style={{ marginTop: '1.5em' }}
+							>
+								닫기
+							</Button>
+						</>
+					) : null}
 				</AlertModal>
 			)}
 		</div>

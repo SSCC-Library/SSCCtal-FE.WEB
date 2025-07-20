@@ -11,3 +11,17 @@
 	justify-content: space-between; /* 왼쪽-오른쪽 양끝 배치 */
 	align-items: center;
 }
+
+.delete-title {
+	font-weight: 700;
+	font-size: 2em;
+	margin-top: 1em;
+}
+
+.delete-wrap {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 1.5em;
+	margin-top: 24px;
+}

@@ -61,9 +61,12 @@
 	grid-template-columns: repeat(2, minmax(90px, 1fr));
 	gap: 8px 22px;
 	font-size: 15px;
+	justify-items: center;
 }
 
 .dropdown-option {
+	width: 70px;
+	text-align: center;
 	padding: 7px 8px;
 	border-radius: 6px;
 	cursor: pointer;

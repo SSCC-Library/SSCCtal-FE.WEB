@@ -23,23 +23,34 @@
 	flex-direction: column;
 	gap: 0.6em;
 	padding: 0.5em 0 1em 0;
+	width: 100%;
 }
 
 .item-modal-row {
 	display: flex;
 	gap: 0.5em;
 	align-items: flex-start;
+	width: 100%;
 }
 
 .item-key {
 	color: #4682b4;
 	font-weight: 600;
-	min-width: 6em;
+	min-width: 8em;
+	max-width: 12em;
 	text-align: right;
+	white-space: nowrap;
+	flex-shrink: 0;
+	padding-right: 1em;
+	display: block;
 }
 
 .item-value {
-	margin-left: 0.6em;
-	word-break: break-all;
 	flex: 1;
+	text-align: left;
+	word-break: break-all;
+	overflow-wrap: anywhere;
+	font-weight: 400;
+	margin-left: 0;
+	display: block;
 }

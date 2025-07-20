@@ -8,9 +8,9 @@
 .main-container {
 	box-sizing: border-box;
 	width: 100%;
-	width: 1500px;
-	height: 530px;
-	margin: 10px 0 60px 0;
+	max-width: 1500px;
+	min-height: 530px;
+	margin: -15px 0 60px 0;
 	padding: 36px 48px;
 
 	border: 1px solid #8e8e8e;
