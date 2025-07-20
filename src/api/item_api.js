@@ -14,10 +14,10 @@ const AUTH_HEADER = {
 	},
 };
 
-export const get_item_list = async (page = 1, size = 10, search_type = '', search_text = '') => {
+export const get_item_list = async (page = 1, search_type = '', search_text = '') => {
 	try {
 		const res = await axios.get(`${BASE_URL}/api/v1/admin/items`, {
-			params: { page, size, search_type, search_text },
+			params: { page, search_type, search_text },
 			// ...AUTH_HEADER,
 		});
 		return res.data;
