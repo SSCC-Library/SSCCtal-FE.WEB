@@ -16,12 +16,12 @@ const AUTH_HEADER = {
 };
 
 //대여/연체 리스트 조회
-export const get_rental_list = async ({
+export const get_rental_list = async (
 	page = 1,
 	search_type = '',
 	search_text = '',
-	rental_status = null,
-} = {}) => {
+	rental_status = null
+) => {
 	try {
 		const res = await axios.get(`${BASE_URL}/api/v1/admin/rentals`, {
 			params: { page, search_type, search_text, rental_status },
