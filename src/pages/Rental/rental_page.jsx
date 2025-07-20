@@ -17,6 +17,7 @@ const columnHelper = createColumnHelper();
 function RentalPage() {
 	const [search_type, set_search_type] = useState('');
 	const [search_text, set_search_text] = useState('');
+	const [input_text, set_input_text] = useState('');
 	const [selected_row, set_selected_row] = useState(null);
 	const [modal_return, set_modal_return] = useState({ open: false, row: null });
 	const [modal_message, set_modal_message] = useState({ open: false, message: '', type: 'info' });
@@ -100,13 +101,25 @@ function RentalPage() {
 		}));
 
 	//대여 기록 리스트 가져오기
-	const fetch_rentals = async (page, size) => {
+	//name, type 데이터 추가로 와야 함
+
+	const fetch_rentals = async (page) => {
 		set_error(null);
 		try {
-			const res = await get_rental_list(page, size, search_type, search_text);
+			const res = await get_rental_list(page, search_type, search_text);
 			if (res.success) {
-				set_data(res.items || []);
-				set_total(res.total || 17);
+				const parsed_data = (res.data || []).map((d) => ({
+					rental_id: d.rental.rental_id,
+					name: null,
+					type: null,
+					user_name: d.user.name,
+					student_id: d.user.student_id,
+					item_borrow_date: d.rental.item_borrow_date,
+					item_return_date: d.rental.item_return_date,
+					rental_status: d.rental.rental_status,
+				}));
+				set_data(parsed_data);
+				set_total(res.total || 0);
 			} else {
 				set_error('검색 결과 없음');
 			}
@@ -121,7 +134,20 @@ function RentalPage() {
 		try {
 			const res = await get_rental_detail(rental_id);
 			if (res.success) {
-				set_detail_data(res);
+				const d = res.data;
+				const parsed_data = {
+					rental_id: d.rental_id,
+					student_id: d.student_id,
+					copy_id: d.copy_id,
+					rental_status: d.rental_status,
+					item_borrow_date: d.item_borrow_date,
+					expectation_return_date: d.expectation_return_date,
+					item_return_date: d.item_return_date,
+					overdue: d.overdue,
+					create_date: d.create_date,
+					update_date: d.update_date,
+				};
+				set_detail_data(parsed_data);
 			} else {
 				set_error('검색 결과 없음');
 			}
@@ -131,8 +157,8 @@ function RentalPage() {
 	};
 
 	useEffect(() => {
-		fetch_rentals(page, size);
-	}, [search_type, search_text, page, size]);
+		fetch_rentals(page);
+	}, [search_type, search_text, page]);
 
 	const handle_row_click = (row) => {
 		set_selected_row(row);
@@ -141,6 +167,7 @@ function RentalPage() {
 
 	const handle_search = () => {
 		set_page(1);
+		set_search_text(input_text);
 	};
 
 	//강제 반납 처리
@@ -170,8 +197,8 @@ function RentalPage() {
 					filter_options={column_options}
 					search_type={search_type}
 					set_search_type={set_search_type}
-					search_text={search_text}
-					set_search_text={set_search_text}
+					search_text={input_text}
+					set_search_text={set_input_text}
 					on_search={handle_search}
 				/>
 			</div>
