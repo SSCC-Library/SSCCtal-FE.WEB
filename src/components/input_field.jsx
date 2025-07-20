@@ -13,6 +13,9 @@ function InputField({ type, value, onChange, placeholder, onSearch }) {
 				onChange={onChange}
 				placeholder={placeholder}
 				className="input-field"
+				onKeyDown={(e) => {
+					if (e.key === 'Enter') onSearch();
+				}}
 			/>
 			<button className="search-btn" type="button" onClick={onSearch}>
 				&#8981;
