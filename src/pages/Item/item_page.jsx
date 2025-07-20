@@ -18,6 +18,7 @@ const columnHelper = createColumnHelper();
 function ItemPage() {
 	const [search_type, set_search_type] = useState('');
 	const [search_text, set_search_text] = useState('');
+	const [input_text, set_input_text] = useState('');
 	const [edit_modal, set_edit_modal] = useState({ open: false, item: null, mode: 'add' });
 	const [selected_row, set_selected_row] = useState(null);
 
@@ -147,6 +148,7 @@ function ItemPage() {
 
 	const handle_search = () => {
 		set_page(1);
+		set_search_text(input_text);
 	};
 
 	const handle_edit = (item = {}) => {
@@ -162,8 +164,8 @@ function ItemPage() {
 					filter_options={column_options}
 					search_type={search_type}
 					set_search_type={set_search_type}
-					search_text={search_text}
-					set_search_text={set_search_text}
+					search_text={input_text}
+					set_search_text={set_input_text}
 					on_search={handle_search}
 				/>
 			</div>
@@ -173,10 +175,8 @@ function ItemPage() {
 					columns={columns}
 					data={data}
 					page={page}
-					size={size}
 					total={total}
 					onPageChange={set_page}
-					onSizeChange={set_size}
 					onRowClick={handle_row_click}
 				/>
 			)}
