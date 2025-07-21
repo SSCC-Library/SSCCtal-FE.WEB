@@ -1,0 +1,105 @@
+.rental-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: sans-serif;
+  padding: 20px;
+}
+
+.rental-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.rental-logo {
+  width: 60px;
+  margin-right: 16px;
+}
+
+.rental-username {
+  margin-left: auto;
+  font-weight: bold;
+}
+
+.rental-nav {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.rental-nav .active {
+  font-weight: bold;
+}
+
+.rental-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+}
+
+.rental-table th,
+.rental-table td {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.overdue {
+  color: red;
+  font-weight: bold;
+}
+
+.no-overdue {
+  color: #666;
+}
+
+@media screen and (max-width: 768px) {
+  .rental-wrapper {
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+
+  .rental-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .rental-logo {
+    width: 50px;
+    margin-right: 0;
+  }
+
+  .rental-username {
+    font-size: 14px;
+  }
+
+  .rental-nav {
+    font-size: 15px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .rental-table {
+    font-size: 13px;
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .rental-table thead,
+  .rental-table tbody,
+  .rental-table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .rental-table table {
+    min-width: 600px;
+  }
+}
