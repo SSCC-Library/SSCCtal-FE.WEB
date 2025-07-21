@@ -28,6 +28,7 @@ function UserPage() {
 
 	const [page, set_page] = useState(1);
 	const [total, set_total] = useState(0);
+	const [loading, set_loading] = useState(false);
 
 	//컬럼 정의
 	const columns = useMemo(
@@ -72,6 +73,11 @@ function UserPage() {
 				meta: {
 					style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 },
 					required: true,
+					type: 'select',
+					options: [
+						{ label: '남', value: 'male' },
+						{ label: '여', value: 'female' },
+					],
 				},
 			}),
 			columnHelper.accessor('major2', {
@@ -93,6 +99,11 @@ function UserPage() {
 				meta: {
 					style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 },
 					required: true,
+					type: 'select',
+					options: [
+						{ label: '학생', value: 'student' },
+						{ label: '교수', value: 'professor' },
+					],
 				},
 			}),
 			columnHelper.accessor('user_status', {
@@ -100,6 +111,12 @@ function UserPage() {
 				meta: {
 					style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 },
 					required: false,
+					// type: 'select',
+					// options: [
+					// 	{ label: '재학', value: '' },
+					// 	{ label: '휴학', value: '' },
+					// 	{ label: '졸업', value: '' },
+					// ],
 				},
 			}),
 			columnHelper.display({
@@ -174,42 +191,34 @@ function UserPage() {
 	//저장(추가/수정)
 	const handle_save = async (form) => {
 		set_form_error(null);
+		set_loading(true);
 		try {
+			let res;
 			if (edit_modal.mode === 'add') {
-				const res = await add_user(form);
-				if (res.success) {
-					set_modal_message({
-						open: true,
-						message: '회원 추가 성공',
-						type: 'success',
-					});
-				} else {
-					set_modal_message({
-						open: true,
-						message: '회원 추가 실패',
-						type: 'error',
-					});
-				}
+				res = await add_user(form);
 			} else {
-				const res = await edit_user(edit_modal.item.student_id, form);
-				if (res.success) {
-					set_modal_message({
-						open: true,
-						message: '회원 수정 성공',
-						type: 'success',
-					});
-				} else {
-					set_modal_message({
-						open: true,
-						message: '회원 수정 실패',
-						type: 'error',
-					});
-				}
+				res = await edit_user(edit_modal.item.student_id, form);
+			}
+
+			if (res.success) {
+				set_modal_message({
+					open: true,
+					message: edit_modal.mode === 'add' ? '회원 추가 성공' : '회원 수정 성공',
+					type: 'success',
+				});
+			} else {
+				set_modal_message({
+					open: true,
+					message: edit_modal.mode === 'add' ? '회원 추가 실패' : '회원 수정 실패',
+					type: 'error',
+				});
 			}
 			set_edit_modal({ open: false, item: null, mode: 'add' });
 			fetch_user(page); // 저장 후 목록 갱신
 		} catch (err) {
 			set_form_error('저장 실패');
+		} finally {
+			set_loading(false);
 		}
 	};
 	const handle_edit = (item = {}) => {
@@ -306,7 +315,8 @@ function UserPage() {
 						fields={column_options}
 						on_save={handle_save}
 						on_cancel={handle_cancel}
-						form_error={form_error}
+						error={form_error}
+						loading={loading}
 					/>
 				</AlertModal>
 			)}
