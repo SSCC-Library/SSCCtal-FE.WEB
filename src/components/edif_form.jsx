@@ -41,16 +41,36 @@ function EditForm({ initial_data, fields, on_save, on_cancel, loading = false, e
 				{fields.map((field) => (
 					<label key={field.value} className="edit-form-label">
 						{field.label}
-						<input
-							name={field.value}
-							type="text"
-							value={form[field.value] ?? ''}
-							onChange={handle_change}
-							className="edit-form-input"
-							autoComplete="off"
-							disabled={loading}
-							required={field.required}
-						/>
+						{field.type == 'select' ? (
+							<select
+								name={field.value}
+								value={form[field.value] ?? ''}
+								onChange={handle_change}
+								className="edit-form-select"
+								disabled={loading}
+								required={field.required}
+							>
+								<option value="" disabled>
+									선택하세요
+								</option>
+								{field.options.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						) : (
+							<input
+								name={field.value}
+								type="text"
+								value={form[field.value] ?? ''}
+								onChange={handle_change}
+								className="edit-form-input"
+								autoComplete="off"
+								disabled={loading}
+								required={field.required}
+							/>
+						)}
 					</label>
 				))}
 			</div>
