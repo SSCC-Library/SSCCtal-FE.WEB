@@ -1,84 +1,117 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/itemlist.css';
+import { useLocation } from 'react-router-dom';
 
 function ItemList() {
-  const [allItems, setAllItems] = useState([]);     // 전체 물품 목록
-  const [items, setItems] = useState([]);            // 필터링된 물품 목록
-  const [search, setSearch] = useState('');          // 검색어
+  const [inputText, setInputText] = useState('');
+  const [total, setTotal] = useState(0);  
+  const [items, setItems] = useState([]);            // 서버에서 받아온 물품 목록
   const [page, setPage] = useState(1);               // 페이지 번호
+  const [searchText, setSearchText] = useState('');
+  const [searchType, setSearchType] = useState('hashtag'); // 기본값 hashtag
   const size = 12;                                   // 고정된 페이지 크기
   const token = localStorage.getItem('token');       // 로그인 후 저장된 토큰
+  const location = useLocation();
+
+useEffect(() => {
+  if (location.pathname === '/itemlist' && location.search === '') {
+    setInputText('');
+    setSearchText('');
+    setPage(1);
+    fetchItems({ text: '', page: 1 });
+  }
+}, [location]);
 
   // 전체 물품 목록 불러오기
-  const fetchItems = async () => {
+  const fetchItems = async (page = 1, size = 12, searchText = '', searchType = 'hashtag') => {
     try {
-      const res = await axios.get('/api/v1/items', {
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/v1/items/list`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
-        params: { page: 1 } // 전체 리스트 불러오기 (페이지 필터링 제거 가능)
+        params: {
+          page,
+          size,
+          search_type: searchType,
+          search_text: searchText
+        }
       });
 
-      const loaded = res.data.items || [];
-      setAllItems(loaded);
+      const loaded = res.data.data || [];
+      setItems(loaded.map(record => ({
+        ...record.item,
+        ...record.item_copy
+      })));
+      setTotal(res.data.total || 0);
     } catch (err) {
       console.error('물품 목록 불러오기 실패:', err);
     }
   };
 
-  // 검색어 변경 또는 전체 데이터 바뀔 때마다 필터링
+  // 페이지 변경 시마다 목록 불러오기
   useEffect(() => {
-    const s = search.trim().toLowerCase();
+    fetchItems(page, size, searchText, searchType);
+  }, [page, searchText, searchType]);
 
-    const filtered = allItems.filter(item => {
-      const nameMatch = item.name.toLowerCase().includes(s);
-      const tags = (item.hashtag || '').split(' ');
-      const tagMatch = tags.some(tag => tag.toLowerCase().replace(/^#/, '').includes(s));
-      return nameMatch || tagMatch;
-    });
-
-    setItems(filtered);
-    setPage(1); // 검색하면 1페이지로 초기화
-  }, [search, allItems]);
-
-  // 마운트 시 최초 한 번 전체 목록 불러오기
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  const totalPages = Math.ceil(items.length / size);
-  const startIndex = (page - 1) * size;
-  const pageItems = items.slice(startIndex, startIndex + size);
+  const totalPages = Math.ceil(total / size);
 
   return (
     <div className="container">
       <div className="list-wrapper">
         {/* 검색창 */}
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="물품명 또는 해시태그를 입력하세요."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div
+          className="search-bar-wrapper"
+        >
+          <div
+            className="search-combo"
+          >
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="combo-dropdown"
+            >
+              <option value="name">물품명</option>
+              <option value="hashtag">해시태그</option>
+            </select>
+            <input
+              type="text"
+              className="combo-input"
+              placeholder="물품명 또는 해시태그를 입력하세요."
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setSearchText(inputText);
+                  setPage(1);
+                }
+              }}
+            />
+          </div>
+          <button
+            onClick={() => {
+              setSearchText(inputText);
+              setPage(1);
+            }}
+            className="search-button"
+          >
+            검색
+          </button>
         </div>
-
         {/* 물품 목록 */}
         <div className="item-container">
-          {pageItems.length > 0 ? (
-            pageItems.map((item, index) => (
+          {items.length > 0 ? (
+            items.map((item, index) => (
               <div
                 className="item-card"
                 key={index}
                 onClick={() => {
                   console.log(item);
-                  if (item.type === '책' && item.name) {
+                  if (item.type === 'book' && item.name) {
                     const query = encodeURIComponent(item.name);
                     window.open(`https://www.google.com/search?q=${query}`, '_blank');
                   }
                 }}
-                style={{ cursor: item.type === '책' ? 'pointer' : 'default' }}
               >
                 <img
                   src={item.image_url || '/img/placeholder.png'}
@@ -91,11 +124,11 @@ function ItemList() {
                     <span key={i} className="hashtag">{tag}</span>
                   ))}
                 </div>
-                <div className={`availability ${item.copy_status === '대출 가능' ? 'available' : 'unavailable'}`}>
-                  {item.copy_status === '대출 가능' ? '🟢 대여 가능' : '🔴 대여 불가'}
+                <div className={`availability ${item.copy_status === 'available' ? 'available' : 'unavailable'}`}>
+                  {item.copy_status === 'available' ? '🟢 대여 가능' : '🔴 대여 불가'}
                 </div>
                 <div className="item-counts">
-                  <div>{item.available_count}/{item.total_count}</div>
+                  <div>{item.available_count ?? item.item?.available_count}/{item.total_count ?? item.item?.total_count}</div>
                 </div>
               </div>
             ))
