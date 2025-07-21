@@ -6,3 +6,14 @@ a {
 a:visited {
   color: inherit; /* 방문 후에도 색 유지 */
 }
+
+select {
+  border: none;
+  outline: none;
+  background: none;
+}
+
+input[type="text"] {
+  border: none;
+  outline: none;
+}

@@ -136,6 +136,21 @@ img.user-icon {
   background-color: #ccc;
 }
 
+.search-button {
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.search-button:hover {
+  background-color: #f5f5f5;
+}
+
 .subtext {
   color: #888;
   font-size: 18px;
@@ -267,5 +282,10 @@ img.user-icon {
 
   .title {
     font-size: 1.2rem;
+  }
+
+  .login img {
+    width: 60px;
+    margin-right: 16px;
   }
 }
