@@ -23,14 +23,14 @@ function EditForm({ initial_data, fields, on_save, on_cancel, loading = false, e
 
 	const handle_submit = (e) => {
 		e.preventDefault();
-		//필수 입력 필드 체크
-		// const empty_field = fields.find(
-		// 	(field) => field.required && (!form[field.value] || form[field.value].trim() === '')
-		// );
-		// if (empty_field) {
-		// 	set_form_error(`${empty_field.label} 입력은 필수입니다.`);
-		// 	return;
-		// }
+		// 필수 입력 필드 체크
+		const empty_field = fields.find(
+			(field) => field.required && (!form[field.value] || form[field.value].trim() === '')
+		);
+		if (empty_field) {
+			set_form_error(`${empty_field.label} 입력은 필수입니다.`);
+			return;
+		}
 		set_form_error(null);
 		on_save(form);
 	};
