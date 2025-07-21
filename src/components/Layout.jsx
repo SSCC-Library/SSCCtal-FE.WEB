@@ -70,7 +70,17 @@ const Layout = ({ children }) => {
       <hr />
       <div className="gnb">
         <Link to="/">공지사항</Link>
-        <Link to="/itemlist">물품 안내</Link>
+        <Link
+          to="/itemlist"
+          onClick={() => {
+            localStorage.removeItem('searchType');
+            localStorage.removeItem('searchText');
+            const input = document.getElementById('search-input');
+            if (input) input.value = '';
+          }}
+        >
+          물품 안내
+        </Link>
         <span
           onClick={() => {
             const token = localStorage.getItem('token');
