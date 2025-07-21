@@ -12,10 +12,13 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post('/api/v1/auth/login', {
-        student_id: studentId,
-        password: password
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/v1/auth/login`,
+        {
+          student_id: studentId,
+          password: password
+        }
+      );
 
       const token = res.data.token;
 
