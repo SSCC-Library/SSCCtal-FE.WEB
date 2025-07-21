@@ -1,0 +1,109 @@
+// src/components/Layout.jsx
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import '../css/style.css';
+import '../css/reset.css';
+
+const Layout = ({ children }) => {
+  const [userName, setUserName] = useState(null);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const name = localStorage.getItem('username');
+    if (token && name) {
+      setUserName(name);
+    }
+  }, []);
+
+  return (
+    <div>
+      <div className="header">
+        <div className="logo">
+          <Link to="/"><img src="/img/logo/logo.png" alt="logo" /></Link>
+        </div>
+        <div className="login">
+          {userName ? (
+            <div
+              className={`user-info-wrapper ${isDropdownOpen ? 'show' : ''}`}
+              onClick={() => setDropdownOpen(prev => !prev)}
+            >
+              <span className="user-info">
+                <img src="/img/login/user-icon.png" alt="user-icon" className="user-icon" />
+                <strong>{userName}</strong>님
+              </span>
+              <div className="user-dropdown">
+                <button
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    const token = localStorage.getItem('token');
+
+                    try {
+                      await fetch('/api/v1/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json'
+                        }
+                      });
+                    } catch (err) {
+                      console.error('로그아웃 API 호출 실패:', err);
+                    }
+
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    setUserName(null);
+                    setDropdownOpen(false);
+                    window.location.href = '/';
+                  }}
+                >
+                  로그아웃
+                </button>
+              </div>
+            </div>
+          ) : (
+            <Link to="/login"><img src="/img/login/login.png" alt="login"/></Link>
+          )}
+        </div>
+      </div>
+      <hr />
+      <div className="gnb">
+        <Link to="/">공지사항</Link>
+        <Link to="/itemlist">물품 안내</Link>
+        <span
+          onClick={() => {
+            const token = localStorage.getItem('token');
+            if (token) {
+              navigate('/rentalhistory');
+            } else {
+              navigate('/login');
+            }
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          마이 페이지
+        </span>
+      </div>
+      <div className="content">
+        {children}
+      </div>
+      <div className="footer">
+        <div className="footer-inner">
+          <div className="footer-logo">
+            <img src="/img/logo/simple-logo.png" alt="footer-logo" />
+            <span>SSCC 물품 대여 시스템</span>
+          </div>
+          <div className="footer-text">
+            Since 1983
+          </div>
+          <div className="footer-copy">
+            © 2025. SSCC All rights reserved.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Layout;

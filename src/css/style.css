@@ -1,0 +1,271 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  background-color: white;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.content {
+  min-height: 50vh;
+  width: 100%;
+  max-width: 1200px;      /* 너비 제한 */
+  margin: 0 auto;         /* 가운데 정렬 */
+  padding: 0 16px;        /* 좌우 여백 */
+  box-sizing: border-box; /* padding 포함 */
+}
+
+.logo img {
+  width: 240px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.login img {
+  width: 100px;
+  margin-right: 30px;
+}
+
+.user-info {
+  display: inline-flex;
+  align-items: center;
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+.user-icon {
+  object-fit: contain;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+img.user-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.gnb {
+  display: flex;
+  justify-content: center;
+  gap: 160px;
+  margin-top: 40px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.gnb a {
+  text-decoration: none;
+  color: black;
+}
+
+/* main.html */
+.notice-box {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   margin: 0 auto;
+   margin-top: 60px;
+
+   border: 2px solid #cccccc;
+   border-radius: 18px;
+   padding: 48px 36px;
+   max-width: 723px;
+   width: 100%;
+   background: #fff;
+   box-sizing: border-box;
+   text-align: center;
+   font-size: 20px;
+   line-height: 25px;
+   font-family: 'Pretendard', sans-serif;
+   color: #000;
+}
+
+.title {
+   font-size: 1.5rem;
+   font-weight: 700;
+   text-align: center;
+   margin-bottom: 30px;
+}
+
+/* login.html */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-box h3 {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.login-form input {
+  width: 100%;
+  max-width: 360px;
+  padding: 16px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background-color: #eee;
+  font-size: 16px;
+}
+
+.login-form button {
+  font-size: 16px;
+  padding: 12px 24px;
+  margin-top: 24px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ddd;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.login-form button:hover {
+  background-color: #ccc;
+}
+
+.subtext {
+  color: #888;
+  font-size: 18px;
+}
+
+/* footer */
+.footer {
+  background-color: #f9f9f9;
+  padding: 30px 0;
+  border-top: 1px solid #ddd;
+  font-size: 14px;
+  color: #555;
+  margin-top: 40px;
+}
+
+.footer-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.footer-logo img {
+  height: 24px;
+}
+
+.footer-text {
+  margin-bottom: 6px;
+}
+
+.footer-copy {
+  font-size: 12px;
+  color: #aaa;
+}
+
+
+.user-info-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  margin-top: 6px;
+  z-index: 10;
+  display: none;
+  min-width: 120px;
+  text-align: center;
+}
+
+.user-dropdown button {
+  background: none;
+  border: none;
+  width: 100%;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.user-dropdown button:hover {
+  background-color: #f2f2f2;
+}
+
+.user-info-wrapper.show .user-dropdown {
+  display: block;
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo img {
+    width: 120px;
+    height: auto;
+  }
+
+  .logo-text {
+    font-size: 13px;
+  }
+
+  .user-info {
+    font-size: 13px;
+    padding: 0;
+    gap: 2px;
+  }
+
+  img.user-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .gnb {
+    font-size: 16px;
+    margin-top: 16px;
+    gap: clamp(16px, 8vw, 40px);
+  }
+
+  .notice-box {
+    font-size: 17px;
+    padding: 36px 24px;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+}
