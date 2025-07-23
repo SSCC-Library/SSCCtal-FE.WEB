@@ -5,7 +5,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { get_user_list, add_user, edit_user } from '../../api/user_api';
+import { get_user_list, get_user_detail, add_user, edit_user } from '../../api/user_api';
 import SearchBar from '../../components/search_bar';
 import Table from '@/components/table';
 import EditForm from '../../components/edif_form';
@@ -18,6 +18,7 @@ const columnHelper = createColumnHelper();
 function UserPage() {
 	const [search_type, set_search_type] = useState('');
 	const [search_text, set_search_text] = useState('');
+	const [selected_row, set_selected_row] = useState(null);
 	const [edit_modal, set_edit_modal] = useState({ open: false, item: null, mode: 'add' });
 	const [delete_modal, set_delete_modal] = useState({ open: false, student_id: null }); // 삭제 모달 추가
 	const [modal_message, set_modal_message] = useState({ open: false, message: '', type: 'info' });
@@ -25,6 +26,9 @@ function UserPage() {
 	const [data, set_data] = useState([]);
 	const [error, set_error] = useState(null);
 	const [form_error, set_form_error] = useState(null);
+
+	const [detail_data, set_detail_data] = useState([]);
+	const [detail_error, set_detail_error] = useState(null);
 
 	const [page, set_page] = useState(1);
 	const [total, set_total] = useState(0);
@@ -243,6 +247,29 @@ function UserPage() {
 		}
 	};
 
+	const handle_row_click = (row) => {
+		set_selected_row(row);
+		fetch_detail(row.student_id);
+	};
+
+	const fetch_detail = async (student_id) => {
+		set_detail_error(null);
+		try {
+			const res = await get_user_detail(student_id);
+			if (res.success) {
+				const d = res.data;
+				const parsed_data = {
+					//데이터 파싱 추후 업데이트 예정
+				};
+				set_detail_data(parsed_data);
+			} else {
+				set_error('검색 결과 없음');
+			}
+		} catch (err) {
+			set_detail_error('상세 정보 불러오기');
+		}
+	};
+
 	return (
 		<div className="user-container">
 			<div className="search-bar-outer">
@@ -263,6 +290,7 @@ function UserPage() {
 					page={page}
 					total={total}
 					onPageChange={set_page}
+					onRowClick={handle_row_click}
 				/>
 			)}
 
@@ -318,6 +346,34 @@ function UserPage() {
 						error={form_error}
 						loading={loading}
 					/>
+				</AlertModal>
+			)}
+
+			{/* 상세 모달 */}
+			{selected_row && (
+				<AlertModal on_close={() => set_selected_row(null)}>
+					{detail_error ? (
+						<div className="error-text">{detail_error}</div>
+					) : detail_data ? (
+						<>
+							<div className="detail-modal-title">회원 상세 정보</div>
+							<div className="detail-modal-info">
+								{Object.entries(detail_data).map(([key, value]) => (
+									<div key={key} className="detail-modal-row">
+										<span className="user-key">{key}:</span>
+										<span className="user-value">{value}</span>
+									</div>
+								))}
+							</div>
+							<Button
+								onClick={() => set_selected_row(null)}
+								class_name="mini-button"
+								style={{ marginTop: '1.5em' }}
+							>
+								닫기
+							</Button>
+						</>
+					) : null}
 				</AlertModal>
 			)}
 		</div>
