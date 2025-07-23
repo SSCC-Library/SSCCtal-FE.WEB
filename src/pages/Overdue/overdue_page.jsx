@@ -97,8 +97,8 @@ function OverduePage() {
 			if (res.success) {
 				const parsed_data = (res.data || []).map((d) => ({
 					rental_id: d.rental.rental_id,
-					name: null,
-					type: null,
+					name: d.item.name,
+					type: d.item.name,
 					user_name: d.user.name,
 					student_id: d.user.student_id,
 					item_borrow_date: d.rental.item_borrow_date,
