@@ -49,9 +49,12 @@ export const get_rental_detail = async (rental_id) => {
 export const edit_rental_status = async (rental_id, rental_status) => {
 	try {
 		const res = await axios.post(
-			`${BASE_URL}/api/v1/admin/rentals/${rental_id}`,
-			{ rental_status: rental_status },
-			AUTH_HEADER
+			`${BASE_URL}/api/v1/admin/rentals/status/${rental_id}`,
+			{
+				rental_id: rental_id,
+				rental_status: rental_status,
+			}
+			// AUTH_HEADER
 		);
 		return res.data;
 	} catch (error) {
