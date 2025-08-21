@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/itemlist.css';
 import { useLocation } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 
 function ItemList() {
   const [inputText, setInputText] = useState('');
@@ -10,9 +11,10 @@ function ItemList() {
   const [page, setPage] = useState(1);               // 페이지 번호
   const [searchText, setSearchText] = useState('');
   const [searchType, setSearchType] = useState('hashtag'); // 기본값 hashtag
-  const size = 12;                                   // 고정된 페이지 크기
-  const token = localStorage.getItem('token');       // 로그인 후 저장된 토큰
   const location = useLocation();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const size = isMobile ? 4 : 12;                                   // 고정된 페이지 크기
+  const token = localStorage.getItem('token');       // 로그인 후 저장된 토큰
 
 useEffect(() => {
   if (location.pathname === '/itemlist' && location.search === '') {
@@ -113,22 +115,27 @@ useEffect(() => {
                   }
                 }}
               >
-                <img
-                  src={item.image_url || '/img/placeholder.png'}
-                  alt={item.name}
-                  className="item-img"
-                />
-                <div className="item-title">{item.name}</div>
-                <div className="item-hashtags">
-                  {(item.hashtag || '').split(' ').map((tag, i) => (
-                    <span key={i} className="hashtag">{tag}</span>
-                  ))}
-                </div>
-                <div className={`availability ${item.copy_status === 'available' ? 'available' : 'unavailable'}`}>
-                  {item.copy_status === 'available' ? '🟢 대여 가능' : '🔴 대여 불가'}
-                </div>
-                <div className="item-counts">
-                  <div>{item.available_count ?? item.item?.available_count}/{item.total_count ?? item.item?.total_count}</div>
+                <div className="item-card-content" style={{ display: isMobile ? 'flex' : 'block', alignItems: isMobile ? 'center' : 'initial' }}>
+                  <img
+                    src={item.image_url || '/img/placeholder.png'}
+                    alt={item.name}
+                    className="item-img"
+                    style={{ width: isMobile ? '80px' : '', height: isMobile ? 'auto' : '', marginRight: isMobile ? '10px' : '' }}
+                  />
+                  <div className="item-info" style={{ flex: 1 }}>
+                    <div className="item-title">{item.name}</div>
+                    <div className="item-hashtags">
+                      {(item.hashtag || '').split(' ').map((tag, i) => (
+                        <span key={i} className="hashtag">{tag}</span>
+                      ))}
+                    </div>
+                    <div className={`availability ${item.copy_status === 'available' ? 'available' : 'unavailable'}`}>
+                      {item.copy_status === 'available' ? '🟢 대여 가능' : '🔴 대여 불가'}
+                    </div>
+                    <div className="item-counts">
+                      <div>{item.available_count ?? item.item?.available_count}/{item.total_count ?? item.item?.total_count}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))
