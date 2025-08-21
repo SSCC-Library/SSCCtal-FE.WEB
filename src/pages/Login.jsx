@@ -24,7 +24,8 @@ const Login = () => {
 
       if (token) {
         localStorage.setItem('token', token);
-        localStorage.setItem('username', res.data.name); // 이름 저장!
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        localStorage.setItem('username', res.data.name); 
         window.location.href = '/';
       } else {
         setError('토큰이 발급되지 않았습니다.');
