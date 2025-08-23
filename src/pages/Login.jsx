@@ -7,6 +7,7 @@ const Login = () => {
   const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -40,25 +41,62 @@ const Login = () => {
       <h3>로그인</h3>
       <p className="subtext">유세인트 계정을 입력하세요.</p>
       <form className="login-form" onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="학번"
-          value={studentId}
-          onChange={(e) => setStudentId(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(e) => {
-            const filtered = e.target.value.replace(/[^\x20-\x7E]/g, '');
-            setPassword(filtered);
-          }}
-          required
-        />
-        <button type="submit">로그인</button>
-        {error && <p className="error-msg">{error}</p>}
+        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          <input
+            type="text"
+            placeholder="학번"
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value)}
+            style={{
+              width: '100%',
+              boxSizing: 'border-box'
+            }}
+          />
+          <div style={{ position: 'relative', marginTop: '0px' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="비밀번호"
+              value={password}
+              onChange={(e) => {
+                const filtered = e.target.value.replace(/[^\x20-\x7E]/g, '');
+                setPassword(filtered);
+              }}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box'
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                right: '8px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                height: '100%'
+              }}
+            >
+              <img
+                src={showPassword ? '/img/login/eye-slash.png' : '/img/login/eye.png'}
+                alt={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                onClick={() => setShowPassword((prev) => !prev)}
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  cursor: 'pointer',
+                  userSelect: 'none'
+                }}
+                tabIndex={-1}
+              />
+            </div>
+          </div>
+        </div>
+        <button type="submit" style={{ marginTop: '12px' }}>로그인</button>
+        <div style={{ minHeight: '1.2em', marginTop: '4px' }}>
+          <p className="error-msg">{error || '\u00A0'}</p>
+        </div>
       </form>
     </div>
   );
