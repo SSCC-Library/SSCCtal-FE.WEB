@@ -47,7 +47,10 @@ const Login = () => {
             type="text"
             placeholder="학번"
             value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
+            onChange={(e) => {
+              const filtered = e.target.value.replace(/[^0-9]/g, '');
+              setStudentId(filtered);
+            }}
             style={{
               width: '100%',
               boxSizing: 'border-box'
