@@ -20,12 +20,12 @@ const Login = () => {
         }
       );
 
-      const token = res.data.token;
+      const token = res.data.data.token;
 
       if (token) {
         localStorage.setItem('token', token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        localStorage.setItem('username', res.data.name); 
+        localStorage.setItem('username', res.data.data.name);
         window.location.href = '/';
       } else {
         setError('토큰이 발급되지 않았습니다.');
@@ -51,7 +51,10 @@ const Login = () => {
           type="password"
           placeholder="비밀번호"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            const filtered = e.target.value.replace(/[^\x20-\x7E]/g, '');
+            setPassword(filtered);
+          }}
           required
         />
         <button type="submit">로그인</button>

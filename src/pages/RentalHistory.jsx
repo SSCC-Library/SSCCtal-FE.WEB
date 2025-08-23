@@ -5,7 +5,7 @@ const RentalHistory = () => {
   const [records, setRecords] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/v1/users/items/rental-records?page=1&size=10`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/v1/users/items/rental-records?page=1`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.items) {
