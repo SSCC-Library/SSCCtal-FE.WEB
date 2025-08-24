@@ -33,7 +33,7 @@ const Login = () => {
         setError('토큰이 발급되지 않았습니다.');
       }
     } catch (err) {
-      setError('로그인에 실패했습니다. 학번과 비밀번호를 확인하세요.');
+      setError('학번과 비밀번호를 다시 확인하세요.');
     }
   };
 
@@ -108,8 +108,16 @@ const Login = () => {
           </div>
         </div>
         <button type="submit" style={{ marginTop: '12px' }}>로그인</button>
-        <div style={{ minHeight: '1.2em', marginTop: '4px' }}>
-          <p className="error-msg">{error || '\u00A0'}</p>
+        <div
+          style={{
+            minHeight: '20px',
+            height: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            marginTop: '20px'
+          }}
+        >
+          <p className="error-msg" style={{ width: '100%', margin: 0, fontSize: '1rem', fontWeight: '500', color: '#ff4d4f', fontFamily: 'Arial, sans-serif' }}>{error || '\u00A0'}</p>
         </div>
       </form>
     </div>
