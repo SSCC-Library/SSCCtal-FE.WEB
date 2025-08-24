@@ -8,6 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -64,36 +65,46 @@ const Login = () => {
                 const filtered = e.target.value.replace(/[^\x20-\x7E]/g, '');
                 setPassword(filtered);
               }}
+              onKeyDown={(e) => setCapsLockOn(e.getModifierState('CapsLock'))}
+              onKeyUp={(e) => setCapsLockOn(e.getModifierState('CapsLock'))}
               style={{
                 width: '100%',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                paddingRight: '60px'
               }}
             />
-            <div
-              style={{
-                position: 'absolute',
-                right: '8px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                height: '100%'
-              }}
-            >
+            {capsLockOn && (
               <img
-                src={showPassword ? '/img/login/eye-slash.png' : '/img/login/eye.png'}
-                alt={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-                onClick={() => setShowPassword((prev) => !prev)}
+                src="/img/login/capslock.png"
+                alt="Caps Lock 켜짐"
                 style={{
+                  position: 'absolute',
+                  right: '30px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
                   width: '20px',
                   height: '20px',
-                  cursor: 'pointer',
+                  pointerEvents: 'none',
                   userSelect: 'none'
                 }}
-                tabIndex={-1}
               />
-            </div>
+            )}
+            <img
+              src={showPassword ? '/img/login/eye-slash.png' : '/img/login/eye.png'}
+              alt={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+              onClick={() => setShowPassword((prev) => !prev)}
+              style={{
+                position: 'absolute',
+                right: '5px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '20px',
+                height: '20px',
+                cursor: 'pointer',
+                userSelect: 'none'
+              }}
+              tabIndex={-1}
+            />
           </div>
         </div>
         <button type="submit" style={{ marginTop: '12px' }}>로그인</button>
