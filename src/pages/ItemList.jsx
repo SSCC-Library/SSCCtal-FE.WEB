@@ -154,8 +154,15 @@ useEffect(() => {
             >
               &laquo; 이전
             </button>
-            <span className="page-info">{page} / {totalPages}</span>
-            <button
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                className={i + 1 === page ? 'active' : ''}
+                onClick={() => setPage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}            <button
               className="next-btn"
               onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
               disabled={page === totalPages}
