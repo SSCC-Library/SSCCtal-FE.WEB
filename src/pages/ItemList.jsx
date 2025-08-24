@@ -140,7 +140,7 @@ useEffect(() => {
               </div>
             ))
           ) : (
-            <div className="no-result">검색 결과가 없습니다.</div>
+            <div className="no-result">{token ? "검색 결과가 없습니다." : "로그인이 필요합니다."}</div>
           )}
         </div>
 
