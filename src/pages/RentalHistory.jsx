@@ -7,9 +7,6 @@ const RentalHistory = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const studentId = localStorage.getItem('studentId');
-    if (!studentId) return;
-
     const token = localStorage.getItem('token');
     const size = 12;
     fetch(
