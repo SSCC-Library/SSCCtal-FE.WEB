@@ -63,7 +63,12 @@ const Layout = ({ children }) => {
               </div>
             </div>
           ) : (
-            <Link to="/login"><img src="/img/login/login.png" alt="login"/></Link>
+            <img
+              src="/img/login/login.png"
+              alt="login"
+              style={{ cursor: 'pointer' }}
+              onClick={() => window.location.replace('/login')}
+            />
           )}
         </div>
       </div>
