@@ -25,7 +25,6 @@ const Login = () => {
 
       if (token) {
         localStorage.setItem('token', token);
-        localStorage.setItem('studentId', studentId);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         localStorage.setItem('username', res.data.data.name);
         window.location.href = '/';

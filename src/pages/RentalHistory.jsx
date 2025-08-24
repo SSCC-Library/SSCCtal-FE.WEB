@@ -13,7 +13,7 @@ const RentalHistory = () => {
     const token = localStorage.getItem('token');
     const size = 12;
     fetch(
-      `${process.env.REACT_APP_API_BASE_URL}/api/v1/users/items/rental-records?page=${page}&size=${size}&student_id=${studentId}`,
+      `${process.env.REACT_APP_API_BASE_URL}/api/v1/users/items/rental-records?page=${page}&size=${size}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`
