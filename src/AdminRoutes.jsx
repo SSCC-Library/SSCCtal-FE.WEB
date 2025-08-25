@@ -3,17 +3,17 @@
 */
 
 import { Routes, Route } from 'react-router-dom';
-import Layout from '@/components/layout';
+import Layout from '@/components/layout_admin';
 import MainPage from '@/pages/Main/main_page';
 import ItemPage from '@/pages/Item/item_page';
 import RentalPage from '@/pages/Rental/rental_page';
 import OverduePage from '@/pages/Overdue/overdue_page';
 import UserPage from '@/pages/User/user_page';
 import RequestPage from './pages/Request/request_page';
-import '@/css/reset.css';
-import '@/css/global.css';
+import '@/css_admin/reset.css';
+import '@/css_admin/global.css';
 
-function Main() {
+function AdminRoutes() {
 	return (
 		<Routes>
 			<Route path="/" element={<Layout />}>
@@ -28,4 +28,4 @@ function Main() {
 	);
 }
 
-export default Main;
+export default AdminRoutes;
