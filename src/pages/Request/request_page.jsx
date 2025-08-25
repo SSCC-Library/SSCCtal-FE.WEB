@@ -19,7 +19,7 @@ function RequestPage() {
 
 	const handle_close = () => {
 		set_open(false);
-		navigate('/'); // 메인으로 강제 이동
+		navigate('/admin'); // 메인으로 강제 이동
 	};
 
 	return (
