@@ -3,8 +3,8 @@
 - 주요 메뉴/로고/알림/관리자 영역 포함
 */
 
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useCallback, useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import AlertIcon from './alert_icon';
 import './nav.css';
 
@@ -20,6 +20,34 @@ function Nav() {
 	//추후 알림 메세지 등록
 	const alerts = '';
 
+	const navigate = useNavigate();
+	const [open, set_open] = useState(false);
+
+	const on_logout = useCallback(
+		async (e) => {
+			e.stopPropagation();
+
+			const token = localStorage.getItem('token');
+
+			try {
+				await fetch('/api/v1/auth/logout', {
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json',
+					},
+				});
+			} catch (err) {
+				console.error('로그아웃 API 호출 실패:', err);
+			} finally {
+				localStorage.removeItem('token');
+				localStorage.removeItem('username');
+				navigate('/');
+			}
+		},
+		[navigate]
+	);
+
 	return (
 		<div className="nav-container">
 			<div className="header">
@@ -31,7 +59,12 @@ function Nav() {
 				</div>
 				<div className="admin-box">
 					<AlertIcon alerts={alerts} />
-					<div className="admin">관리자 님</div>
+					<div className="admin" onClick={() => set_open((v) => !v)}>
+						관리자 님
+					</div>
+					<div className={`admin-dropdown ${open ? 'open' : ''}`}>
+						<button onClick={on_logout}>로그아웃</button>
+					</div>
 				</div>
 			</div>
 			<div className="divider"></div>
