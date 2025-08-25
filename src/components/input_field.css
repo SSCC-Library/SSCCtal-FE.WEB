@@ -7,7 +7,7 @@
 	width: 250px;
 	height: 35px;
 	background: #fff;
-	border: 3px solid #d9d9d9;
+	border: 3px solid #d9d9d9 !important;
 	border-radius: 15px;
 	padding: 0 40px 0 1em;
 	font-size: 20px;
@@ -17,7 +17,7 @@
 }
 
 .input-field:focus {
-	border-color: #4682b4;
+	border-color: #4682b4 !important;
 	box-shadow: 0 0 5px #b0c4de;
 	outline: none;
 }
