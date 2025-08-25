@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 import '../css/style.css';
 import '../css/reset.css';
 
@@ -11,6 +12,8 @@ const Login = () => {
 	const [capsLockOn, setCapsLockOn] = useState(false);
 
 	const REACT_APP_API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+	const navigate = useNavigate();
+
 	const handleLogin = async (e) => {
 		e.preventDefault();
 
@@ -26,6 +29,10 @@ const Login = () => {
 				localStorage.setItem('token', token);
 				axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 				localStorage.setItem('username', res.data.data.name);
+				if (res.data.data.user_classification === 'STAFF') {
+					navigate('/admin');
+					return;
+				}
 				window.location.href = '/';
 			} else {
 				setError('토큰이 발급되지 않았습니다.');
