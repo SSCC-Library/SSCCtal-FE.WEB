@@ -7,7 +7,7 @@
 
 import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-const ADMIN_TOKEN = 'mock-admin-token';
+const ADMIN_TOKEN = localStorage.getItem('token');
 
 const AUTH_HEADER = {
 	headers: {
@@ -25,7 +25,7 @@ export const get_rental_list = async (
 	try {
 		const res = await axios.get(`${BASE_URL}/api/v1/admin/rentals`, {
 			params: { page, search_type, search_text, rental_status },
-			// ...AUTH_HEADER,
+			...AUTH_HEADER,
 		});
 		return res.data;
 	} catch (error) {
@@ -37,7 +37,7 @@ export const get_rental_list = async (
 //대여 정보 상세 조회
 export const get_rental_detail = async (rental_id) => {
 	try {
-		const res = await axios.get(`${BASE_URL}/api/v1/admin/rentals/${rental_id}`);
+		const res = await axios.get(`${BASE_URL}/api/v1/admin/rentals/${rental_id}`, AUTH_HEADER);
 		return res.data;
 	} catch (error) {
 		console.error('대여 기록 상세 조회 실패:', error);
@@ -53,8 +53,8 @@ export const edit_rental_status = async (rental_id, rental_status) => {
 			{
 				rental_id: rental_id,
 				rental_status: rental_status,
-			}
-			// AUTH_HEADER
+			},
+			AUTH_HEADER
 		);
 		return res.data;
 	} catch (error) {
