@@ -1,0 +1,70 @@
+.user-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 30px;
+}
+
+.search-bar-outer {
+	width: 100%;
+	display: flex;
+	justify-content: space-between; /* 왼쪽-오른쪽 양끝 배치 */
+	align-items: center;
+}
+
+.delete-title {
+	font-weight: 700;
+	font-size: 2em;
+	margin-top: 1em;
+}
+
+.delete-wrap {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 1.5em;
+	margin-top: 24px;
+}
+
+.detail-modal-title {
+	font-weight: 700;
+	font-size: 1.15em;
+	margin-bottom: 1em;
+}
+
+.detail-modal-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6em;
+	padding: 0.5em 0 1em 0;
+	width: 100%;
+}
+
+.detail-modal-row {
+	display: flex;
+	gap: 0.5em;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.user-key {
+	color: #4682b4;
+	font-weight: 600;
+	min-width: 8em;
+	max-width: 12em;
+	text-align: right;
+	white-space: nowrap;
+	flex-shrink: 0;
+	padding-right: 1em;
+	display: block;
+}
+
+.user-value {
+	flex: 1;
+	text-align: left;
+	word-break: break-all;
+	overflow-wrap: anywhere;
+	font-weight: 400;
+	margin-left: 0;
+	display: block;
+}

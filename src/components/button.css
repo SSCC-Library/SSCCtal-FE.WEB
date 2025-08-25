@@ -1,0 +1,32 @@
+.common-btn {
+	padding: 0.6em 1.6em;
+	background: #4682b4;
+	color: #fff;
+	font-size: 1.05em;
+	border: none;
+	border-radius: 1em;
+	cursor: pointer;
+	font-weight: 600;
+	transition:
+		background-color 0.2s,
+		box-shadow 0.2s;
+	box-shadow: 0 2px 8px rgba(70, 130, 180, 0.06);
+}
+
+.common-btn:hover {
+	background-color: #315e89;
+}
+
+.common-btn:disabled {
+	background-color: #c6d4e2;
+	color: #b0b0b0;
+	cursor: not-allowed;
+}
+
+/* 추가 스타일(작은 버튼 등) */
+.mini-button {
+	padding: 0.4em 1em;
+	font-size: 0.96em;
+	border-radius: 0.7em;
+	min-width: 5em;
+}

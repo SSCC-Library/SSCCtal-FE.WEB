@@ -1,0 +1,16 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+html,
+body {
+	font-family: 'Pretendard', sans-serif;
+	/* 전역 폰트 설정 */
+}
+
+a {
+	text-decoration: none; /* 밑줄 제거 */
+	color: inherit; /* 상위 요소의 글자색을 따르게 */
+}
+
+a:visited {
+	color: inherit; /* 방문 후에도 색 유지 */
+}

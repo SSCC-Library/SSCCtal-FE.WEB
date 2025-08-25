@@ -1,0 +1,64 @@
+.custom-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #fff;
+	border-radius: 10px;
+	overflow: hidden;
+	box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+}
+
+.custom-table th,
+.custom-table td {
+	border: 1px solid #e0e0e0;
+	padding: 14px 12px;
+	text-align: center;
+	font-size: 16px;
+}
+
+.custom-table th {
+	background: #f0f2f7;
+	font-weight: 700;
+	color: #222;
+}
+
+.custom-table tr:nth-child(even) {
+	background: #fafbfc;
+}
+
+/* 테이블 내 버튼 */
+.custom-table button {
+	padding: 6px 12px;
+	border: none;
+	background: #4682b4;
+	color: #fff;
+	border-radius: 6px;
+	font-size: 14px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+.custom-table button:hover {
+	background-color: #315e89;
+}
+
+/* 페이지네이션 */
+.pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	margin: 24px 0;
+}
+.pagination button {
+	border: none;
+	background: #f0f2f7;
+	color: #333;
+	border-radius: 5px;
+	padding: 4px 10px;
+	font-size: 14px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+.pagination button:disabled {
+	opacity: 0.3;
+	cursor: not-allowed;
+}

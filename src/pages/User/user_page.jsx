@@ -1,0 +1,383 @@
+/*
+회원 관리 페이지
+- 회원 목록/검색/정보 수정/회원 추가 기능 제공
+*/
+
+import React, { useMemo, useState, useEffect } from 'react';
+import { createColumnHelper } from '@tanstack/react-table';
+import { get_user_list, get_user_detail, add_user, edit_user } from '../../api/user_api';
+import SearchBar from '../../components/search_bar';
+import Table from '@/components/table';
+import EditForm from '../../components/edif_form';
+import AlertModal from '../../components/alert_modal';
+import Button from '../../components/button';
+import './user.css';
+
+const columnHelper = createColumnHelper();
+
+function UserPage() {
+	const [search_type, set_search_type] = useState('');
+	const [search_text, set_search_text] = useState('');
+	const [selected_row, set_selected_row] = useState(null);
+	const [edit_modal, set_edit_modal] = useState({ open: false, item: null, mode: 'add' });
+	const [delete_modal, set_delete_modal] = useState({ open: false, student_id: null }); // 삭제 모달 추가
+	const [modal_message, set_modal_message] = useState({ open: false, message: '', type: 'info' });
+
+	const [data, set_data] = useState([]);
+	const [error, set_error] = useState(null);
+	const [form_error, set_form_error] = useState(null);
+
+	const [detail_data, set_detail_data] = useState([]);
+	const [detail_error, set_detail_error] = useState(null);
+
+	const [page, set_page] = useState(1);
+	const [total, set_total] = useState(0);
+	const [loading, set_loading] = useState(false);
+
+	//컬럼 정의
+	const columns = useMemo(
+		() => [
+			columnHelper.accessor('name', {
+				header: '이름',
+				meta: {
+					style: { padding: '8px 16px', minWidth: 80, maxWidth: 120 },
+					required: true,
+				},
+			}),
+			columnHelper.accessor('major', {
+				header: '학과',
+				meta: {
+					style: { padding: '8px 16px', minWidth: 60, maxWidth: 120 },
+					required: true,
+				},
+			}),
+			columnHelper.accessor('student_id', {
+				header: '학번',
+				meta: {
+					style: { padding: '8px 16px', minWidth: 120, maxWidth: 250 },
+					required: true,
+				},
+			}),
+			columnHelper.accessor('email', {
+				header: '이메일',
+				meta: {
+					style: { padding: '8px 28px', minWidth: 120, maxWidth: 220 },
+					required: true,
+				},
+			}),
+			columnHelper.accessor('phone_number', {
+				header: '전화번호',
+				meta: {
+					style: { padding: '8px 28px', minWidth: 120, maxWidth: 220 },
+					required: true,
+				},
+			}),
+			columnHelper.accessor('gender', {
+				header: '성별',
+				meta: {
+					style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 },
+					required: true,
+					type: 'select',
+					options: [
+						{ label: '남', value: 'male' },
+						{ label: '여', value: 'female' },
+					],
+				},
+			}),
+			columnHelper.accessor('major2', {
+				header: '복수전공',
+				meta: {
+					style: { padding: '8px 16px', minWidth: 60, maxWidth: 120 },
+					required: false,
+				},
+			}),
+			columnHelper.accessor('minor', {
+				header: '부전공',
+				meta: {
+					style: { padding: '8px 16px', minWidth: 60, maxWidth: 120 },
+					required: false,
+				},
+			}),
+			columnHelper.accessor('user_classification', {
+				header: '분류',
+				meta: {
+					style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 },
+					required: true,
+					type: 'select',
+					options: [
+						{ label: '학생', value: 'student' },
+						{ label: '교수', value: 'professor' },
+					],
+				},
+			}),
+			columnHelper.accessor('user_status', {
+				header: '학적',
+				meta: {
+					style: { padding: '8px 16px', minWidth: 40, maxWidth: 60 },
+					required: false,
+					// type: 'select',
+					// options: [
+					// 	{ label: '재학', value: '' },
+					// 	{ label: '휴학', value: '' },
+					// 	{ label: '졸업', value: '' },
+					// ],
+				},
+			}),
+			columnHelper.display({
+				id: 'adjust',
+				header: '관리',
+				cell: (info) => (
+					<div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+						<button onClick={() => handle_edit(info.row.original)}>수정</button>
+						<button
+							onClick={() =>
+								set_delete_modal({
+									open: true,
+									student_id: info.row.original.student_id,
+								})
+							}
+						>
+							삭제
+						</button>
+					</div>
+				),
+				meta: {
+					style: { padding: '8px 6px', minWidth: 60, maxWidth: 80, textAlign: 'center' },
+				},
+			}),
+		],
+		[]
+	);
+
+	//검색용 필터 옵션 추출
+	const column_options = columns
+		.filter((col) => col.accessorKey) // accessor 컬럼만 골라냄
+		.map((col) => ({
+			value: col.accessorKey,
+			label: typeof col.header === 'string' ? col.header : col.accessorKey,
+			...(col.meta || {}),
+		}));
+
+	//회원 리스트 가져오기
+	const fetch_user = async (page) => {
+		set_error(null);
+		try {
+			const res = await get_user_list(page, search_type, search_text);
+			if (res.success) {
+				const parsed_data = (res.data || []).map((d) => ({
+					student_id: d.student_id,
+					name: d.name,
+					email: d.email,
+					phone_number: d.phone_number,
+					gender: d.gender,
+					major: d.major,
+					major2: d.major2,
+					minor: d.minor,
+				}));
+				set_data(parsed_data);
+				set_total(res.total || 0);
+			} else {
+				set_error('검색 결과 없음');
+			}
+		} catch (err) {
+			set_error('회원 목록 불러오기 실패');
+		}
+	};
+
+	useEffect(() => {
+		fetch_user(page);
+	}, [search_type, search_text, page]);
+
+	const handle_search = () => {
+		set_page(1);
+	};
+
+	//저장(추가/수정)
+	const handle_save = async (form) => {
+		set_form_error(null);
+		set_loading(true);
+		try {
+			let res;
+			if (edit_modal.mode === 'add') {
+				res = await add_user(form);
+			} else {
+				res = await edit_user(edit_modal.item.student_id, form);
+			}
+
+			if (res.success) {
+				set_modal_message({
+					open: true,
+					message: edit_modal.mode === 'add' ? '회원 추가 성공' : '회원 수정 성공',
+					type: 'success',
+				});
+			} else {
+				set_modal_message({
+					open: true,
+					message: edit_modal.mode === 'add' ? '회원 추가 실패' : '회원 수정 실패',
+					type: 'error',
+				});
+			}
+			set_edit_modal({ open: false, item: null, mode: 'add' });
+			fetch_user(page); // 저장 후 목록 갱신
+		} catch (err) {
+			set_form_error('저장 실패');
+		} finally {
+			set_loading(false);
+		}
+	};
+	const handle_edit = (item = {}) => {
+		set_edit_modal({ open: true, item, mode: item && item.student_id ? 'edit' : 'add' });
+	};
+	const handle_cancel = () => set_edit_modal({ open: false, item: null, mode: 'add' });
+
+	const handle_delete = async () => {
+		try {
+			const res = await delete_user(delete_modal.student_id);
+			if (res.success) {
+				set_delete_modal({ open: false, student_id: null });
+				set_modal_message({ open: true, message: '회원 삭제 완료', type: 'success' });
+			} else {
+				set_delete_modal({ open: false, student_id: null });
+				set_modal_message({ open: true, message: '회원 삭제 실패', type: 'error' });
+			}
+			fetch_user(page);
+		} catch (err) {
+			set_delete_modal({ open: false, student_id: null });
+			set_modal_message({ open: true, message: '회원 삭제 실패', type: 'error' });
+		}
+	};
+
+	const handle_row_click = (row) => {
+		set_selected_row(row);
+		fetch_detail(row.student_id);
+	};
+
+	const fetch_detail = async (student_id) => {
+		set_detail_error(null);
+		try {
+			const res = await get_user_detail(student_id);
+			if (res.success) {
+				const d = res.data;
+				const parsed_data = {
+					//데이터 파싱 추후 업데이트 예정
+				};
+				set_detail_data(parsed_data);
+			} else {
+				set_error('검색 결과 없음');
+			}
+		} catch (err) {
+			set_detail_error('상세 정보 불러오기');
+		}
+	};
+
+	return (
+		<div className="user-container">
+			<div className="search-bar-outer">
+				<Button onClick={() => handle_edit({})}>추가</Button>
+				<SearchBar
+					filter_options={column_options}
+					search_type={search_type}
+					set_search_type={set_search_type}
+					search_text={search_text}
+					set_search_text={set_search_text}
+					on_search={handle_search}
+				/>
+			</div>
+			{!error && (
+				<Table
+					columns={columns}
+					data={data}
+					page={page}
+					total={total}
+					onPageChange={set_page}
+					onRowClick={handle_row_click}
+				/>
+			)}
+
+			{/* 에러 메세지 */}
+			{error && <div className="error-text">{error}</div>}
+
+			{/* 성공/실패 메시지 모달 */}
+			{modal_message.open && (
+				<AlertModal
+					on_close={() => set_modal_message({ open: false, message: '', type: '' })}
+				>
+					<div
+						className={modal_message.type === 'success' ? 'success-text' : 'error-text'}
+					>
+						{modal_message.message}
+					</div>
+					<Button
+						class_name="mini-button"
+						onClick={() => set_modal_message({ open: false, message: '', type: '' })}
+						style={{ margin: '1.5em auto 0 auto', display: 'block' }}
+					>
+						확인
+					</Button>
+				</AlertModal>
+			)}
+
+			{/* 삭제 확인 모달 */}
+			{delete_modal.open && (
+				<AlertModal on_close={() => set_delete_modal({ open: false, student_id: null })}>
+					<div className="delete-title">삭제 하시겠습니까?</div>
+					<div className="delete-wrap">
+						<Button class_name="mini-button" onClick={handle_delete}>
+							예
+						</Button>
+						<Button
+							class_name="mini-button"
+							onClick={() => set_delete_modal({ open: false, student_id: null })}
+						>
+							아니오
+						</Button>
+					</div>
+				</AlertModal>
+			)}
+
+			{/* 수정/추가 모달 */}
+			{edit_modal.open && (
+				<AlertModal on_close={handle_cancel}>
+					<EditForm
+						initial_data={edit_modal.item}
+						fields={column_options}
+						on_save={handle_save}
+						on_cancel={handle_cancel}
+						error={form_error}
+						loading={loading}
+					/>
+				</AlertModal>
+			)}
+
+			{/* 상세 모달 */}
+			{selected_row && (
+				<AlertModal on_close={() => set_selected_row(null)}>
+					{detail_error ? (
+						<div className="error-text">{detail_error}</div>
+					) : detail_data ? (
+						<>
+							<div className="detail-modal-title">회원 상세 정보</div>
+							<div className="detail-modal-info">
+								{Object.entries(detail_data).map(([key, value]) => (
+									<div key={key} className="detail-modal-row">
+										<span className="user-key">{key}:</span>
+										<span className="user-value">{value}</span>
+									</div>
+								))}
+							</div>
+							<Button
+								onClick={() => set_selected_row(null)}
+								class_name="mini-button"
+								style={{ marginTop: '1.5em' }}
+							>
+								닫기
+							</Button>
+						</>
+					) : null}
+				</AlertModal>
+			)}
+		</div>
+	);
+}
+
+export default UserPage;
