@@ -16,65 +16,49 @@ function ItemList() {
   const size = 12;
   const token = localStorage.getItem('token');       // 로그인 후 저장된 토큰
 
-useEffect(() => {
-  if (location.pathname === '/itemlist' && location.search === '') {
-    setInputText('');
-    setSearchText('');
-    setPage(1);
-    fetchItems(1, size, '', 'hashtag');
-  }
-}, [location]);
+  useEffect(() => {
+    if (location.pathname === '/itemlist' && location.search === '') {
+      setInputText('');
+      setSearchText('');
+      setPage(1);
+      fetchItems(1, size, '', 'hashtag');
+    }
+  }, [location, size]);
 
-	useEffect(() => {
-		if (location.pathname === '/itemlist' && location.search === '') {
-			setInputText('');
-			setSearchText('');
-			setPage(1);
-			fetchItems({ text: '', page: 1 });
-		}
-	}, [location]);
-
-	// 전체 물품 목록 불러오기
-	const fetchItems = async (page = 1, size = 12, searchText = '', searchType = 'hashtag') => {
-		try {
-			const res = await axios.get(`${REACT_APP_API_BASE_URL}/api/v1/items/list`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-				params: {
-					page,
-					size,
-					search_type: searchType,
-					search_text: searchText,
-				},
-			});
-          setItems(res.data.items);
+  // 전체 물품 목록 불러오기
+  const fetchItems = async (page = 1, size = 12, searchText = '', searchType = 'hashtag') => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/v1/items/list`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          page,
+          size,
+          search_type: searchType,
+          search_text: searchText,
+        },
+      });
+      setItems(res.data.items);
       setTotal(res.data.total);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // 페이지, 검색어, 검색타입이 바뀔 때마다 목록 불러오기
+  // 페이지, 검색어, 검색타입, size가 바뀔 때마다 목록 불러오기
   useEffect(() => {
     fetchItems(page, size, searchText, searchType);
   }, [page, searchText, searchType, size]);
 
-	// 페이지 변경 시마다 목록 불러오기
-	useEffect(() => {
-		fetchItems(page, size, searchText, searchType);
-	}, [page, searchText, searchType]);
+  const totalPages = Math.ceil(total / size);
 
   return (
     <div className="container">
       <div className="list-wrapper">
         {/* 검색창 */}
-        <div
-          className="search-bar-wrapper"
-        >
-          <div
-            className="search-combo"
-          >
+        <div className="search-bar-wrapper">
+          <div className="search-combo">
             <select
               value={searchType}
               onChange={(e) => setSearchType(e.target.value)}
@@ -115,7 +99,6 @@ useEffect(() => {
                 className="item-card"
                 key={index}
                 onClick={() => {
-                  console.log(item);
                   if (item.type === 'book' && item.name) {
                     const query = encodeURIComponent(item.name);
                     window.open(`https://www.google.com/search?q=${query}`, '_blank');
@@ -151,37 +134,37 @@ useEffect(() => {
           )}
         </div>
 
-				{/* 페이지네이션 */}
-				{totalPages > 1 && (
-					<div className="pagination">
-						<button
-							className="prev-btn"
-							onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-							disabled={page === 1}
-						>
-							&laquo; 이전
-						</button>
-						{[...Array(totalPages)].map((_, i) => (
-							<button
-								key={i}
-								className={i + 1 === page ? 'active' : ''}
-								onClick={() => setPage(i + 1)}
-							>
-								{i + 1}
-							</button>
-						))}{' '}
-						<button
-							className="next-btn"
-							onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-							disabled={page === totalPages}
-						>
-							다음 &raquo;
-						</button>
-					</div>
-				)}
-			</div>
-		</div>
-	);
+        {/* 페이지네이션 */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="prev-btn"
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+            >
+              &laquo; 이전
+            </button>
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                className={i + 1 === page ? 'active' : ''}
+                onClick={() => setPage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              className="next-btn"
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
+            >
+              다음 &raquo;
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default ItemList;

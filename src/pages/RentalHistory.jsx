@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import axios from 'axios';
 import '../css/rentalhistory.css';
 
 const RentalHistory = () => {
@@ -9,6 +10,22 @@ const RentalHistory = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
 	const REACT_APP_API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
+  useEffect(() => {
+    const fetchRentalHistory = async () => {
+      try {
+        const response = await axios.get(`${REACT_APP_API_BASE_URL}/rental-history`, {
+          params: { page }
+        });
+        const data = response.data;
+        setRecords(data.records || []);
+        setTotalPages(data.totalPages || 1);
+      } catch (error) {
+        console.error('Failed to fetch rental history:', error);
+      }
+    };
+    fetchRentalHistory();
+  }, [page, REACT_APP_API_BASE_URL]);
 
   return (
     <div className="rental-wrapper">

@@ -2,8 +2,8 @@ import React from 'react';
 
 const Main = () => {
   return (
-    <div className="notice-box">
-      <div className="title">대여 이용 안내</div>
+    <div className="notice-box-user">
+      <div className="title-user">대여 이용 안내</div>
       <p>기본 대여 기간은 <strong>1주</strong>입니다.</p>
       <p>
         물품 대여는 동아리방 내 키오스크에서만 진행되며,<br />

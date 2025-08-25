@@ -74,7 +74,7 @@ const Layout = ({ children }) => {
         </div>
       </div>
       <hr />
-      <div className="gnb">
+      <div className="gnb-user">
         <Link to="/">공지사항</Link>
         <Link
           to="/itemlist"
@@ -101,7 +101,7 @@ const Layout = ({ children }) => {
           마이 페이지
         </span>
       </div>
-      <div className="content">
+      <div className="content-user">
         {children}
       </div>
       <div className="footer">
@@ -134,10 +134,10 @@ const Layout = ({ children }) => {
             <h2 className="modal-title">Contributors</h2>
             <ul className="modal-list">
               <li>40기 AI융합학부 원영진</li>
-              <li>41기 컴퓨터학부 정영인</li>
-              <li>42기 AI융합학부 권나현</li>
-              <li>42기 컴퓨터학부 송채원</li>
-              <li>43기 컴퓨터학부 김지성</li>
+              <li>40기 컴퓨터학부 정영인</li>
+              <li>41기 AI융합학부 권나현</li>
+              <li>41기 컴퓨터학부 송채원</li>
+              <li>42기 컴퓨터학부 김지성</li>
             </ul>
             <button
               onClick={() => setShowContributors(false)}

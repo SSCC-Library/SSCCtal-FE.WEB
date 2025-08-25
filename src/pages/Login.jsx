@@ -11,14 +11,14 @@ const Login = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [capsLockOn, setCapsLockOn] = useState(false);
 
-	const REACT_APP_API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
-	const navigate = useNavigate();
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const navigate = useNavigate();
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
 
 		try {
-			const res = await axios.post(`${REACT_APP_API_BASE_URL}/api/v1/auth/login`, {
+			const res = await axios.post(`${baseUrl}/api/v1/auth/login`, {
 				student_id: studentId,
 				password: password,
 			});
@@ -43,7 +43,7 @@ const Login = () => {
 	};
 
 	return (
-		<div className="notice-box login-box">
+		<div className="notice-box-user login-box">
 			<h3>로그인</h3>
 			<p className="subtext">유세인트 계정을 입력하세요.</p>
 			<form className="login-form" onSubmit={handleLogin}>
