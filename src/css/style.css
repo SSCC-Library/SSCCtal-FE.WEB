@@ -183,18 +183,23 @@ img.user-icon {
 }
 
 .footer-logo img {
-  height: 24px;
+  height: 32px;
 }
 
 .footer-text {
   margin-bottom: 6px;
+  font-size: 16px;
 }
 
 .footer-copy {
-  font-size: 12px;
+  font-size: 15px;
   color: #aaa;
 }
 
+.footer-copy:hover {
+  color: #888;
+  cursor: pointer;
+}
 
 .user-info-wrapper {
   position: relative;
@@ -240,7 +245,9 @@ img.user-icon {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 20px;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-bottom: 1px;
   }
 
   .logo {
@@ -250,7 +257,7 @@ img.user-icon {
   }
 
   .logo img {
-    width: 120px;
+    width: 135px;
     height: auto;
   }
 
@@ -267,12 +274,13 @@ img.user-icon {
   img.user-icon {
     width: 12px;
     height: 12px;
+    margin-right: 16px;
   }
 
   .gnb {
     font-size: 16px;
     margin-top: 16px;
-    gap: clamp(16px, 8vw, 40px);
+    gap: clamp(24px, 12vw, 40px);
   }
 
   .notice-box {
@@ -283,9 +291,109 @@ img.user-icon {
   .title {
     font-size: 1.2rem;
   }
+}
 
-  .login img {
-    width: 60px;
-    margin-right: 16px;
-  }
+.password-input {
+  width: 100%;
+  max-width: 360px;
+  padding: 16px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background-color: #eee;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.capslock-icon {
+  position: absolute;
+  right: 44px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff9800;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 2;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+}
+
+
+.error-msg-inline {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  text-align: left;
+  width: 100%;
+  max-width: 360px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  display: block;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  width: 400px;
+  padding: 48px 36px;
+  border-radius: 16px;
+  background-color: #fff;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.16);
+  text-align: center;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.modal-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-content ul li {
+  margin-bottom: 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 18px;
+  color: #333;
+}
+
+.modal-close-button {
+  margin-top: 24px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.modal-close-button:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
 }

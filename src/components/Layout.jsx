@@ -7,6 +7,7 @@ import '../css/reset.css';
 const Layout = ({ children }) => {
   const [userName, setUserName] = useState(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [showContributors, setShowContributors] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -112,11 +113,41 @@ const Layout = ({ children }) => {
           <div className="footer-text">
             Since 1983
           </div>
-          <div className="footer-copy">
+          <div
+            className="footer-copy"
+            style={{ cursor: 'pointer' }}
+            onClick={() => setShowContributors(true)}
+          >
             © 2025. SSCC All rights reserved.
           </div>
         </div>
       </div>
+      {showContributors && (
+        <div
+          className="modal-backdrop"
+          onClick={() => setShowContributors(false)}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="modal-title">Contributors</h2>
+            <ul className="modal-list">
+              <li>40기 AI융합학부 원영진</li>
+              <li>41기 컴퓨터학부 정영인</li>
+              <li>42기 AI융합학부 권나현</li>
+              <li>42기 컴퓨터학부 송채원</li>
+              <li>43기 컴퓨터학부 김지성</li>
+            </ul>
+            <button
+              onClick={() => setShowContributors(false)}
+              className="modal-close-button"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
