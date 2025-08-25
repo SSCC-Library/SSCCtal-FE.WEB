@@ -10,11 +10,11 @@ import './nav.css';
 
 function Nav() {
 	const menus = [
-		{ to: '/items', label: '물품 관리' },
-		{ to: '/rentals', label: '대여 기록' },
-		{ to: '/overdue', label: '연체 관리' },
-		{ to: '/users', label: '회원 관리' },
-		{ to: '/requests', label: '요청 사항 ' },
+		{ to: '/admin/items', label: '물품 관리' },
+		{ to: '/admin/rentals', label: '대여 기록' },
+		{ to: '/admin/overdue', label: '연체 관리' },
+		{ to: '/admin/users', label: '회원 관리' },
+		{ to: '/admin/requests', label: '요청 사항 ' },
 	];
 
 	//추후 알림 메세지 등록
@@ -25,8 +25,8 @@ function Nav() {
 			<div className="header">
 				<div className="logo">
 					{/* 메인 페이지 이동용 로고 */}
-					<Link to="/">
-						<img src="src/assets/img/sscc_logo.png" alt="logo" />
+					<Link to="/admin">
+						<img src="/img/sscc_logo.png" alt="logo" />
 					</Link>
 				</div>
 				<div className="admin-box">
