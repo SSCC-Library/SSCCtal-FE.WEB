@@ -23,14 +23,36 @@ function EditForm({ initial_data, fields, on_save, on_cancel, loading = false, e
 
 	const handle_submit = (e) => {
 		e.preventDefault();
-		// 필수 입력 필드 체크
-		const empty_field = fields.find(
-			(field) => field.required && (!form[field.value] || form[field.value].trim() === '')
-		);
+
+		const empty_field = fields.find((field) => {
+			if (!field.required) return false;
+
+			const v = form[field.value];
+
+			// null/undefined → 빈값
+			if (v === null || v === undefined) return true;
+
+			// 숫자 0은 유효값
+			if (typeof v === 'number') return false;
+
+			// boolean은 보통 select/checkbox에서만 쓸 텐데, false를 빈값 취급할지 정책 결정
+			if (typeof v === 'boolean') return !v && field.strict === true;
+
+			// 문자열만 trim 검사
+			if (typeof v === 'string') return v.trim() === '';
+
+			// 배열이면 길이 0이면 빈값
+			if (Array.isArray(v)) return v.length === 0;
+
+			// 그 외(객체 등)는 여기선 빈값으로 취급
+			return true;
+		});
+
 		if (empty_field) {
 			set_form_error(`${empty_field.label} 입력은 필수입니다.`);
 			return;
 		}
+
 		set_form_error(null);
 		on_save(form);
 	};
@@ -41,7 +63,7 @@ function EditForm({ initial_data, fields, on_save, on_cancel, loading = false, e
 				{fields.map((field) => (
 					<label key={field.value} className="edit-form-label">
 						{field.label}
-						{field.type == 'select' ? (
+						{field.type === 'select' ? (
 							<select
 								name={field.value}
 								value={form[field.value] ?? ''}
