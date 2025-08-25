@@ -6,7 +6,7 @@
 
 import Nav from './nav';
 import { Outlet } from 'react-router-dom';
-import './layout.css';
+import './layout_admin.css';
 
 function Layout() {
 	return (
