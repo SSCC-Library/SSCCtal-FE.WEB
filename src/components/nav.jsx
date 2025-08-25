@@ -42,6 +42,7 @@ function Nav() {
 			} finally {
 				localStorage.removeItem('token');
 				localStorage.removeItem('username');
+				localStorage.removeItem('role');
 				navigate('/');
 			}
 		},
@@ -63,6 +64,15 @@ function Nav() {
 						관리자 님
 					</div>
 					<div className={`admin-dropdown ${open ? 'open' : ''}`}>
+						<button
+							type="button"
+							onClick={(e) => {
+								e.stopPropagation();
+								navigate('/');
+							}}
+						>
+							유저 페이지로
+						</button>
 						<button onClick={on_logout}>로그아웃</button>
 					</div>
 				</div>

@@ -29,10 +29,8 @@ const Login = () => {
 				localStorage.setItem('token', token);
 				axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 				localStorage.setItem('username', res.data.data.name);
-				if (res.data.data.user_classification === 'STAFF') {
-					navigate('/admin');
-					return;
-				}
+				if (res.data.data.user_classification === 'STAFF')
+					localStorage.setItem('role', 'STAFF');
 				window.location.href = '/';
 			} else {
 				setError('토큰이 발급되지 않았습니다.');
