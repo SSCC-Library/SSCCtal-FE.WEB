@@ -24,7 +24,7 @@ const Layout = ({ children }) => {
 	return (
 		<div>
 			<div className="header-user">
-				<div className="logo-user">
+				<div className="logo">
 					<Link to="/">
 						<img src="/img/logo/logo.png" alt="logo" />
 					</Link>
