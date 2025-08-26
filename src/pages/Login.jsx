@@ -41,7 +41,7 @@ const Login = () => {
 	};
 
 	return (
-		<div className="notice-box login-box">
+		<div className="notice-box-user login-box">
 			<h3>로그인</h3>
 			<p className="subtext">유세인트 계정을 입력하세요.</p>
 			<form className="login-form" onSubmit={handleLogin}>
