@@ -55,7 +55,7 @@ function Nav() {
 				<div className="logo">
 					{/* 메인 페이지 이동용 로고 */}
 					<Link to="/admin">
-						<img src="/img/sscc_logo.png" alt="logo" />
+						<img src="/public/img/logo/logo.png" alt="logo" />
 					</Link>
 				</div>
 				<div className="admin-box">
