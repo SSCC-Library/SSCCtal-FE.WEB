@@ -83,7 +83,7 @@
   min-width: 0;
 }
 
-.container {
+.container-user {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
@@ -92,7 +92,7 @@
   align-items: center;
 }
 
-.item-container {
+.item-container-user {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 3vw 2vw; 
@@ -101,11 +101,15 @@
 
 .item-card {
   width: 220px;
+  min-height: 320px;
   border: 1px solid #ccc;
   padding: 12px;
   border-radius: 6px;
   transition: transform 0.3s ease;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .item-card:hover {
@@ -114,7 +118,19 @@
 
 .item-img {
   width: 100%;
-  height: auto;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 10px;
 }
 
 .item-title {
@@ -164,69 +180,6 @@
   margin-top: 8px;
   padding: 6px 10px;
   font-size: 14px;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 40px;
-  gap: 20px;
-}
-
-.page-info {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-
-.prev-btn {
-  padding: 8px 14px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.next-btn {
-  padding: 8px 14px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.pagination {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-
-.pagination button {
-  background: none;
-  border: none;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: color 0.2s ease;
-}
-
-.pagination button:hover:not(:disabled) {
-  color: #007bff;
-}
-
-.pagination button:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
-.pagination button.active {
-  font-weight: bold;
-  color: #007bff;
 }
 
 .combo-input {
@@ -291,7 +244,11 @@
 }
 
 @media screen and (max-width: 768px) {
-  .item-container {
+  .container-user {
+    padding: 5px;
+  }
+
+  .item-container-user {
     grid-template-columns: repeat(2, 1fr);
     padding: 10px;
     justify-items: center;
@@ -338,12 +295,13 @@
     border-radius: 6px;
   }
 
-  .item-container {
+  .item-container-user {
     display: flex;
     flex-direction: column;
     align-items: center;
     max-height: calc(100vh - 200px);
     overflow-y: auto;
+    margin-top: 5px;
   }
 
   .item-card {
@@ -352,14 +310,16 @@
     align-items: flex-start;
     width: 90%;
     max-width: 400px;
+    min-height: 150px;
     margin-bottom: 2px;
   }
 
   .item-img {
-    min-width: 80px;
+    min-width: 100px;
     width: 40%;
-    height: auto;
+    height: 130px;
     object-fit: cover;
+    border-radius: 4px;
   }
 
   .item-info {
@@ -367,7 +327,7 @@
     padding-left: 12px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
   }
