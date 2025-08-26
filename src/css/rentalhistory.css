@@ -73,35 +73,14 @@
   transition: all 0.2s ease-in-out;
 }
 
-.pagination {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-
-.pagination button {
-  background: none;
-  border: none;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: color 0.2s ease;
-}
-
-.pagination button:hover:not(:disabled) {
-  color: #007bff;
-}
-
-.pagination button:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
-.pagination button.active {
+.status-overdue {
+  color: red;
   font-weight: bold;
-  color: #007bff;
+}
+
+.status-returned {
+  text-decoration: line-through;
+  color: gray;
 }
 
 @media screen and (max-width: 768px) {
@@ -151,14 +130,8 @@
   .rental-table table {
     min-width: 600px;
   }
-}
 
-.status-overdue {
-  color: red;
-  font-weight: bold;
-}
-
-.status-returned {
-  text-decoration: line-through;
-  color: gray;
+  .hide-mobile {
+    display: none;
+  }
 }
