@@ -8,6 +8,7 @@ const Layout = ({ children }) => {
 	const [userName, setUserName] = useState(null);
 	const [isDropdownOpen, setDropdownOpen] = useState(false);
 	const [isAdmin, setIsAdmin] = useState(false);
+	const [isModalOpen, setModalOpen] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -22,8 +23,8 @@ const Layout = ({ children }) => {
 
 	return (
 		<div>
-			<div className="header">
-				<div className="logo">
+			<div className="header-user">
+				<div className="logo-user">
 					<Link to="/">
 						<img src="/img/logo/logo.png" alt="logo" />
 					</Link>
@@ -93,7 +94,7 @@ const Layout = ({ children }) => {
 				</div>
 			</div>
 			<hr />
-			<div className="gnb">
+			<div className="gnb-user">
 				<Link to="/">공지사항</Link>
 				<Link
 					to="/itemlist"
@@ -123,13 +124,32 @@ const Layout = ({ children }) => {
 			<div className="content">{children}</div>
 			<div className="footer">
 				<div className="footer-inner">
-					<div className="footer-logo">
+					<div
+						className="footer-logo"
+						onClick={() => setModalOpen(true)}
+						style={{ cursor: "pointer" }}
+					>
 						<img src="/img/logo/simple-logo.png" alt="footer-logo" />
 						<span>SSCC 물품 대여 시스템</span>
 					</div>
-					<div className="footer-text">Since 1983</div>
-					<div className="footer-copy">© 2025. SSCC All rights reserved.</div>
+					<div className="footer-text">Soongsil Computing Club · Since 1983</div>
+					<div className="footer-copy"> © 2025. SSCC All rights reserved. </div>
 				</div>
+				{isModalOpen && (
+					<div className="modal-overlay" onClick={() => setModalOpen(false)}>
+						<div className="modal" onClick={(e) => e.stopPropagation()}>
+							<h2>Contributors</h2>
+							<ul>
+								<li>40기 AI융합학부 원영진</li>
+								<li>40기 컴퓨터학부 정영인</li>
+								<li>41기 AI융합학부 권나현</li>
+								<li>41기 컴퓨터학부 송채원</li>
+								<li>42기 컴퓨터학부 김지성</li>
+							</ul>
+							<button className="close-btn" onClick={() => setModalOpen(false)}>Close</button>
+						</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);
