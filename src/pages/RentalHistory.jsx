@@ -12,7 +12,7 @@ const RentalHistory = () => {
 		const token = localStorage.getItem('token');
 		const size = 12;
 		fetch(
-			`${REACT_APP_API_BASE_URL}/api/v1/users/items/rental-records?page=${page}&size=${size}`,
+			`${REACT_APP_API_BASE_URL}/api/v1/users/items/rental-records?page=${page}`,
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,
@@ -39,9 +39,9 @@ const RentalHistory = () => {
 						<tr>
 							<th>대여 물품 명</th>
 							<th>상태</th>
-							<th>대여일</th>
+							<th className="hide-mobile">대여일</th>
 							<th>반납 예정일</th>
-							<th>반납일</th>
+							<th className="hide-mobile">반납일</th>
 							<th>연체</th>
 						</tr>
 					</thead>
@@ -79,7 +79,7 @@ const RentalHistory = () => {
 									>
 										{rentalStatus}
 									</td>
-									<td>{borrowDate}</td>
+									<td className="hide-mobile">{borrowDate}</td>
 									<td
 										className={
 											rentalStatusRaw === 'overdue'
@@ -91,7 +91,7 @@ const RentalHistory = () => {
 									>
 										{expectationReturnDate}
 									</td>
-									<td>{itemReturnDate}</td>
+									<td className="hide-mobile">{itemReturnDate}</td>
 									<td className={overdueClass}>{overdueText}</td>
 								</tr>
 							);
@@ -100,9 +100,9 @@ const RentalHistory = () => {
 				</table>
 				{/* 페이지네이션 */}
 				{totalPages > 1 && (
-					<div className="pagination">
+					<div className="pagination-user">
 						<button
-							className="prev-btn"
+							className="prev-btn-user"
 							onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
 							disabled={page === 1}
 						>
@@ -118,7 +118,7 @@ const RentalHistory = () => {
 							</button>
 						))}
 						<button
-							className="next-btn"
+							className="next-btn-user"
 							onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
 							disabled={page === totalPages}
 						>

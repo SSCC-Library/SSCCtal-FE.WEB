@@ -13,7 +13,7 @@ function ItemList() {
 	const [searchType, setSearchType] = useState('hashtag'); // 기본값 hashtag
 	const location = useLocation();
 	const isMobile = useMediaQuery({ maxWidth: 768 });
-	const size = isMobile ? 4 : 12; // 고정된 페이지 크기
+	const size = 12;
 	const token = localStorage.getItem('token'); // 로그인 후 저장된 토큰
 
 	const REACT_APP_API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -63,7 +63,7 @@ function ItemList() {
 	const totalPages = Math.ceil(total / size);
 
 	return (
-		<div className="container">
+		<div className="container-user">
 			<div className="list-wrapper">
 				{/* 검색창 */}
 				<div className="search-bar-wrapper">
@@ -79,7 +79,7 @@ function ItemList() {
 						<input
 							type="text"
 							className="combo-input"
-							placeholder="물품명 또는 해시태그를 입력하세요."
+							placeholder="검색어를 입력하세요."
 							value={inputText}
 							onChange={(e) => setInputText(e.target.value)}
 							onKeyDown={(e) => {
@@ -101,7 +101,7 @@ function ItemList() {
 					</button>
 				</div>
 				{/* 물품 목록 */}
-				<div className="item-container">
+				<div className="item-container-user">
 					{items.length > 0 ? (
 						items.map((item, index) => (
 							<div
@@ -170,9 +170,9 @@ function ItemList() {
 
 				{/* 페이지네이션 */}
 				{totalPages > 1 && (
-					<div className="pagination">
+					<div className="pagination-user">
 						<button
-							className="prev-btn"
+							className="prev-btn-user"
 							onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
 							disabled={page === 1}
 						>
@@ -188,7 +188,7 @@ function ItemList() {
 							</button>
 						))}{' '}
 						<button
-							className="next-btn"
+							className="next-btn-user"
 							onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
 							disabled={page === totalPages}
 						>
