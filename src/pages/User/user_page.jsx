@@ -18,6 +18,7 @@ const columnHelper = createColumnHelper();
 function UserPage() {
 	const [search_type, set_search_type] = useState('');
 	const [search_text, set_search_text] = useState('');
+	const [input_text, set_input_text] = useState('');
 	const [selected_row, set_selected_row] = useState(null);
 	const [edit_modal, set_edit_modal] = useState({ open: false, item: null, mode: 'add' });
 	const [delete_modal, set_delete_modal] = useState({ open: false, student_id: null }); // 삭제 모달 추가
@@ -105,11 +106,12 @@ function UserPage() {
 					required: true,
 					type: 'select',
 					options: [
-						{ label: '학생', value: 'student' },
-						{ label: '교수', value: 'professor' },
+						{ label: '일반', value: 'student' },
+						{ label: '관리자', value: 'staff' },
 					],
 				},
 			}),
+
 			columnHelper.accessor('user_status', {
 				header: '학적',
 				meta: {
@@ -173,6 +175,7 @@ function UserPage() {
 					major: d.major,
 					major2: d.major2,
 					minor: d.minor,
+					user_classification: d.user_classification,
 				}));
 				set_data(parsed_data);
 				set_total(res.total || 0);
@@ -190,6 +193,7 @@ function UserPage() {
 
 	const handle_search = () => {
 		set_page(1);
+		set_search_text(input_text);
 	};
 
 	//저장(추가/수정)
@@ -278,8 +282,8 @@ function UserPage() {
 					filter_options={column_options}
 					search_type={search_type}
 					set_search_type={set_search_type}
-					search_text={search_text}
-					set_search_text={set_search_text}
+					search_text={input_text}
+					set_search_text={set_input_text}
 					on_search={handle_search}
 				/>
 			</div>
@@ -350,7 +354,7 @@ function UserPage() {
 			)}
 
 			{/* 상세 모달 */}
-			{selected_row && (
+			{/* {selected_row && (
 				<AlertModal on_close={() => set_selected_row(null)}>
 					{detail_error ? (
 						<div className="error-text">{detail_error}</div>
@@ -375,7 +379,7 @@ function UserPage() {
 						</>
 					) : null}
 				</AlertModal>
-			)}
+			)} */}
 		</div>
 	);
 }
