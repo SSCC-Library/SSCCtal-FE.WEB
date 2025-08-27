@@ -152,7 +152,7 @@ function RentalPage() {
 				set_error('검색 결과 없음');
 			}
 		} catch (err) {
-			set_detail_error('상세 정보 불러오기');
+			set_detail_error('상세 정보 불러오기 실패');
 		}
 	};
 
@@ -210,7 +210,6 @@ function RentalPage() {
 					size={size}
 					total={total}
 					onPageChange={set_page}
-					onSizeChange={set_size}
 					onRowClick={handle_row_click}
 				/>
 			)}
