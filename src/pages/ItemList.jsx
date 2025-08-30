@@ -43,12 +43,7 @@ function ItemList() {
 			});
 
 			const loaded = res.data.data || [];
-			setItems(
-				loaded.map((record) => ({
-					...record.item,
-					...record.item_copy,
-				}))
-			);
+			setItems(loaded);
 			setTotal(res.data.total || 0);
 		} catch (err) {
 			console.error('물품 목록 불러오기 실패:', err);
@@ -145,16 +140,13 @@ function ItemList() {
 											))}
 										</div>
 										<div
-											className={`availability ${item.copy_status === 'available' ? 'available' : 'unavailable'}`}
+											className={`availability ${item.available_count > 0 ? 'available' : 'unavailable'}`}
 										>
-											{item.copy_status === 'available'
-												? '🟢 대여 가능'
-												: '🔴 대여 불가'}
+											{item.available_count > 0 ? '🟢 대여 가능' : '🔴 대여 불가'}
 										</div>
 										<div className="item-counts">
 											<div>
-												{item.available_count ?? item.item?.available_count}
-												/{item.total_count ?? item.item?.total_count}
+												{item.available_count}/{item.total_count}
 											</div>
 										</div>
 									</div>
