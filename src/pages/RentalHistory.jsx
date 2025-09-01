@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../css/rentalhistory.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../App';
 
 const RentalHistory = () => {
 	const [records, setRecords] = useState([]);
@@ -7,29 +10,57 @@ const RentalHistory = () => {
 	const [totalPages, setTotalPages] = useState(1);
 
 	const REACT_APP_API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+	const navigate = useNavigate();
+	const { authToken } = useAuth();
 
 	useEffect(() => {
-		const token = localStorage.getItem('token');
-		const size = 12;
-		fetch(
-			`${REACT_APP_API_BASE_URL}/api/v1/users/items/rental-records?page=${page}`,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			}
-		)
-			.then((res) => res.json())
-			.then((data) => {
-				if (data.success && data.data) {
-					setRecords(data.data);
-					if (data.total !== undefined) {
-						setTotalPages(Math.ceil(data.total / size));
-					}
-				}
-			})
-			.catch((err) => console.error('대여 기록 불러오기 실패', err));
-	}, [page]);
+	  const size = 12;
+
+	  // 토큰이 없으면 로그인 페이지로 보냄 (새로고침 등 초기 진입 시 보호)
+	  if (!authToken) {
+	    navigate('/login', { replace: true });
+	    return;
+	  }
+
+	  let cancelled = false;
+
+	  axios
+	    .get(`${REACT_APP_API_BASE_URL}/api/v1/users/items/rental-records`, {
+	      params: { page, size },
+	      headers: { Authorization: `Bearer ${authToken}` }, // 안전하게 헤더 보장
+	    })
+	    .then((res) => {
+	      if (cancelled) return;
+	      const data = res?.data;
+	      if (data?.success && data?.data) {
+	        setRecords(data.data);
+	        if (data.total !== undefined) setTotalPages(Math.ceil(data.total / size));
+	      }
+	    })
+	    .catch((err) => {
+	      if (cancelled) return;
+	      const status = err?.response?.status;
+	      const detail = err?.response?.data?.detail;
+	      if (status === 401) {
+	        // 만료 또는 유효하지 않은 토큰 → 전역 로그아웃 훅 호출
+	        if (typeof window !== 'undefined' && typeof window.__appLogout === 'function') {
+	          window.__appLogout(detail || '로그인이 만료되었습니다. 다시 로그인해주세요.');
+	        } else {
+	          navigate('/login', { replace: true });
+	        }
+	      } else if (status === 403) {
+	        // 권한 없음: 사용자 페이지에서 403이면 로그인은 유지, 홈으로 보냄
+	        alert(detail || '접근 권한이 없습니다.');
+	        navigate('/', { replace: true });
+	      } else {
+	        console.error('대여 기록 불러오기 실패', err);
+	      }
+	    });
+
+	  return () => {
+	    cancelled = true;
+	  };
+	}, [authToken, page, REACT_APP_API_BASE_URL, navigate]);
 
 	return (
 		<div className="rental-wrapper">

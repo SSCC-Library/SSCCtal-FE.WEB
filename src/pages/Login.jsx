@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import '../css/style.css';
 import '../css/reset.css';
+
+import { useAuth } from '../App';
 
 const Login = () => {
 	const [studentId, setStudentId] = useState('');
@@ -13,6 +15,7 @@ const Login = () => {
 
 	const REACT_APP_API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 	const navigate = useNavigate();
+	const { login } = useAuth();
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
@@ -31,7 +34,8 @@ const Login = () => {
 				localStorage.setItem('username', res.data.data.name);
 				if (res.data.data.user_classification === 'STAFF')
 					localStorage.setItem('role', 'STAFF');
-				window.location.href = '/';
+				login(token);
+				navigate('/', { replace: true });
 			} else {
 				setError('토큰이 발급되지 않았습니다.');
 			}

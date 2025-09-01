@@ -3,28 +3,25 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import '../css/style.css';
 import '../css/reset.css';
+import { useAuth } from '../App';
 
 const Layout = ({ children }) => {
 	const [userName, setUserName] = useState(null);
 	const [isDropdownOpen, setDropdownOpen] = useState(false);
-	const [isAdmin, setIsAdmin] = useState(false);
 	const [isModalOpen, setModalOpen] = useState(false);
 	const navigate = useNavigate();
+	const { authToken, role, logout } = useAuth();
+	const isAdmin = role === 'STAFF' || localStorage.getItem('role') === 'STAFF';
 
 	useEffect(() => {
-		const token = localStorage.getItem('token');
 		const name = localStorage.getItem('username');
-		const role = localStorage.getItem('role');
-		if (token && name) {
-			setUserName(name);
-		}
-		setIsAdmin(role === 'STAFF');
+		if (name) setUserName(name);
 	}, []);
 
 	return (
 		<div>
 			<div className="header-user">
-				<div className="logo">
+				<div className="logo-user">
 					<Link to="/">
 						<img src="/img/logo/logo.png" alt="logo" />
 					</Link>
@@ -55,28 +52,11 @@ const Layout = ({ children }) => {
 									</button>
 								)}
 								<button
-									onClick={async (e) => {
+									onClick={(e) => {
 										e.stopPropagation();
-										const token = localStorage.getItem('token');
-
-										try {
-											await fetch('/api/v1/auth/logout', {
-												method: 'POST',
-												headers: {
-													Authorization: `Bearer ${token}`,
-													'Content-Type': 'application/json',
-												},
-											});
-										} catch (err) {
-											console.error('로그아웃 API 호출 실패:', err);
-										}
-
-										localStorage.removeItem('token');
-										localStorage.removeItem('username');
-										localStorage.removeItem('role');
-										setUserName(null);
 										setDropdownOpen(false);
-										window.location.href = '/';
+										setUserName(null);
+										logout();
 									}}
 								>
 									로그아웃
@@ -88,7 +68,7 @@ const Layout = ({ children }) => {
 							src="/img/login/login.png"
 							alt="login"
 							style={{ cursor: 'pointer' }}
-							onClick={() => window.location.replace('/login')}
+							onClick={() => navigate('/login')}
 						/>
 					)}
 				</div>
@@ -109,12 +89,8 @@ const Layout = ({ children }) => {
 				</Link>
 				<span
 					onClick={() => {
-						const token = localStorage.getItem('token');
-						if (token) {
-							navigate('/rentalhistory');
-						} else {
-							navigate('/login');
-						}
+						if (authToken || localStorage.getItem('token')) navigate('/rentalhistory')
+						else navigate('/login');
 					}}
 					style={{ cursor: 'pointer' }}
 				>
