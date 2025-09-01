@@ -8,7 +8,7 @@
   background-color: white;
 }
 
-.logo {
+.log-user {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -23,7 +23,7 @@
   box-sizing: border-box; /* padding 포함 */
 }
 
-.logo img {
+.logo-user img {
   width: 240px;
   height: 120px;
   object-fit: contain;
