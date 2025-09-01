@@ -248,6 +248,10 @@
     padding: 5px;
   }
 
+  .item-card {
+    min-height: 150px;
+  }
+
   .item-container-user {
     grid-template-columns: repeat(2, 1fr);
     padding: 10px;
@@ -310,7 +314,6 @@
     align-items: flex-start;
     width: 90%;
     max-width: 400px;
-    min-height: 150px;
     margin-bottom: 2px;
   }
 
